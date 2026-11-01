@@ -524,13 +524,13 @@
       <div class="content-wrapper">
         <div class="page-header">
           <div>
-            <h1>Bảng điều khiển Tổng quan</h1>
+            <h1>Tổng quan bảo trì</h1>
             <p>
               Chào mừng trở lại! Đây là tình trạng bảo trì hệ thống hôm nay.
             </p>
           </div>
           <button class="btn btn-primary" data-call="openWorkModal">
-            <i class="fa-solid fa-plus"></i> Tạo công việc mới
+            <i class="fa-solid fa-plus"></i> Tạo lệnh bảo trì
           </button>
         </div>
 
@@ -545,7 +545,7 @@
             </div>
             <div class="stat-info">
               <h3 id="stat-total">0</h3>
-              <p>Tổng số Công việc</p>
+              <p>Tổng lệnh bảo trì</p>
             </div>
           </div>
           <div class="stat-card">
@@ -578,11 +578,15 @@
         </div>
 
         <!-- TABLE -->
-        <div class="table-container">
+        <div class="table-container" id="work-orders">
           <div class="table-header">
-            <h2>Danh sách Công việc</h2>
+            <h2>Lệnh bảo trì</h2>
             <div class="filter-group">
-              <input type="date" id="filterDate" title="Lọc theo ngày dự kiến" />
+              <input
+                type="date"
+                id="filterDate"
+                title="Lọc theo ngày dự kiến"
+              />
               <select id="filterStatus">
                 <option value="all">Tất cả trạng thái</option>
                 <option value="inprogress">Đang thực hiện</option>
@@ -656,7 +660,12 @@
         </div>
         <div class="form-group">
           <label>Người phụ trách</label>
-          <input type="text" id="w-assignee" maxlength="120" placeholder="Tên kỹ thuật viên" />
+          <input
+            type="text"
+            id="w-assignee"
+            maxlength="120"
+            placeholder="Tên kỹ thuật viên"
+          />
         </div>
         <div class="form-group">
           <label>Mô tả chi tiết</label>
@@ -695,10 +704,14 @@
         const works = await MyxTech.Works.getAll();
         const query = currentFilter.search.trim().toLocaleLowerCase("vi");
         const filtered = works.filter((work) => {
-          const searchable = `${work.code} ${work.name} ${work.equip}`.toLocaleLowerCase("vi");
-          return (!query || searchable.includes(query)) &&
-            (currentFilter.status === "all" || work.status === currentFilter.status) &&
-            (!currentFilter.date || work.date === currentFilter.date);
+          const searchable =
+            `${work.code} ${work.name} ${work.equip}`.toLocaleLowerCase("vi");
+          return (
+            (!query || searchable.includes(query)) &&
+            (currentFilter.status === "all" ||
+              work.status === currentFilter.status) &&
+            (!currentFilter.date || work.date === currentFilter.date)
+          );
         });
 
         if (filtered.length === 0) {
@@ -707,7 +720,8 @@
           filtered.forEach((work) => {
             const st = STATUS_MAP[work.status] || STATUS_MAP.scheduled;
             const escape = MyxTech.utils.escapeHTML;
-            const overdue = work.status !== "terminated" && work.date < MyxTech.utils.today();
+            const overdue =
+              work.status !== "terminated" && work.date < MyxTech.utils.today();
             const tr = document.createElement("tr");
             tr.innerHTML = `
                     <td><a href="work-detail.html?id=${encodeURIComponent(work.code)}" class="work-code">${escape(work.code)}</a></td>
@@ -727,8 +741,10 @@
 
         const stats = {
           total: works.length,
-          inprogress: works.filter((work) => work.status === "inprogress").length,
-          terminated: works.filter((work) => work.status === "terminated").length,
+          inprogress: works.filter((work) => work.status === "inprogress")
+            .length,
+          terminated: works.filter((work) => work.status === "terminated")
+            .length,
           scheduled: works.filter((work) => work.status === "scheduled").length,
         };
         document.getElementById("stat-total").innerText = stats.total;
@@ -753,33 +769,43 @@
         renderWorks().catch((error) => alert(error.message));
       });
 
-      document.getElementById("works-tbody").addEventListener("click", async (event) => {
-        const button = event.target.closest("button[data-action]");
-        if (!button) return;
-        try {
-          if (button.dataset.action === "edit") await editWork(button.dataset.code);
-          if (button.dataset.action === "delete") await deleteWork(button.dataset.code);
-          if (button.dataset.action === "start") {
-            await MyxTech.Works.start(button.dataset.code);
+      document
+        .getElementById("works-tbody")
+        .addEventListener("click", async (event) => {
+          const button = event.target.closest("button[data-action]");
+          if (!button) return;
+          try {
+            if (button.dataset.action === "edit")
+              await editWork(button.dataset.code);
+            if (button.dataset.action === "delete")
+              await deleteWork(button.dataset.code);
+            if (button.dataset.action === "start") {
+              await MyxTech.Works.start(button.dataset.code);
+            }
+          } catch (error) {
+            alert(error.message);
           }
-        } catch (error) {
-          alert(error.message);
-        }
-      });
+        });
 
       // Modal
       async function openWorkModal() {
         const items = await MyxTech.Items.getAll();
         const assetSelect = document.getElementById("w-asset");
-        assetSelect.innerHTML = `<option value="">Chọn thiết bị...</option>` + items.map((item) =>
-          `<option value="${MyxTech.utils.escapeHTML(item.code)}">${MyxTech.utils.escapeHTML(item.code)} - ${MyxTech.utils.escapeHTML(item.name)}</option>`
-        ).join("");
+        assetSelect.innerHTML =
+          `<option value="">Chọn thiết bị...</option>` +
+          items
+            .map(
+              (item) =>
+                `<option value="${MyxTech.utils.escapeHTML(item.code)}">${MyxTech.utils.escapeHTML(item.code)} - ${MyxTech.utils.escapeHTML(item.name)}</option>`,
+            )
+            .join("");
         document.getElementById("modal-title").innerText = "Tạo Công việc mới";
         document.getElementById("edit-index").value = "";
         document.getElementById("w-code").value = "";
         document.getElementById("w-code").disabled = false;
         document.getElementById("w-name").value = "";
-        assetSelect.value = new URLSearchParams(location.search).get("assetCode") || "";
+        assetSelect.value =
+          new URLSearchParams(location.search).get("assetCode") || "";
         document.getElementById("w-type").value = "preventive";
         document.getElementById("w-date").value = MyxTech.utils.today();
         document.getElementById("w-priority").value = "normal";
@@ -796,9 +822,14 @@
         const w = await MyxTech.Works.getById(code);
         if (!w) return;
         const items = await MyxTech.Items.getAll();
-        document.getElementById("w-asset").innerHTML = `<option value="">Chọn thiết bị...</option>` + items.map((item) =>
-          `<option value="${MyxTech.utils.escapeHTML(item.code)}">${MyxTech.utils.escapeHTML(item.code)} - ${MyxTech.utils.escapeHTML(item.name)}</option>`
-        ).join("");
+        document.getElementById("w-asset").innerHTML =
+          `<option value="">Chọn thiết bị...</option>` +
+          items
+            .map(
+              (item) =>
+                `<option value="${MyxTech.utils.escapeHTML(item.code)}">${MyxTech.utils.escapeHTML(item.code)} - ${MyxTech.utils.escapeHTML(item.name)}</option>`,
+            )
+            .join("");
         document.getElementById("modal-title").innerText =
           "Chỉnh sửa Công việc";
         document.getElementById("edit-index").value = code;
@@ -806,7 +837,8 @@
         document.getElementById("w-code").disabled = true; // Không cho đổi mã
         document.getElementById("w-name").value = w.name;
         document.getElementById("w-asset").value = w.assetCode || "";
-        document.getElementById("w-type").value = w.maintenanceType || "preventive";
+        document.getElementById("w-type").value =
+          w.maintenanceType || "preventive";
         document.getElementById("w-date").value = w.date;
         document.getElementById("w-priority").value = w.priority || "normal";
         document.getElementById("w-assignee").value = w.assignee || "";
@@ -854,28 +886,34 @@
       }
 
       // Đăng xuất
-      document.getElementById("logoutBtn").addEventListener("click", async (e) => {
-        e.preventDefault();
-        if (confirm("Bạn có chắc chắn muốn đăng xuất?")) {
-          try {
-            await MyxTech.User.logout();
-            window.location.href = "login.html";
-          } catch (error) {
-            alert(error.message);
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", async (e) => {
+          e.preventDefault();
+          if (confirm("Bạn có chắc chắn muốn đăng xuất?")) {
+            try {
+              await MyxTech.User.logout();
+              window.location.href = "login.html";
+            } catch (error) {
+              alert(error.message);
+            }
           }
-        }
-      });
+        });
 
       // Lắng nghe sự kiện dữ liệu thay đổi (kể cả từ tab khác)
       window.addEventListener("myxtech:data-changed", (e) => {
-        if (e.detail.resource === "works") renderWorks().catch((error) => alert(error.message));
+        if (e.detail.resource === "works")
+          renderWorks().catch((error) => alert(error.message));
       });
 
       document.addEventListener("DOMContentLoaded", () => {
-        MyxTech.init().then(async () => {
-          await renderWorks();
-          if (new URLSearchParams(location.search).has("assetCode")) await openWorkModal();
-        }).catch((error) => alert(error.message));
+        MyxTech.init()
+          .then(async () => {
+            await renderWorks();
+            if (new URLSearchParams(location.search).has("assetCode"))
+              await openWorkModal();
+          })
+          .catch((error) => alert(error.message));
       });
     </script>
     <script src="data-manager.js"></script>

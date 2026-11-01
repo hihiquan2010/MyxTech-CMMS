@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tài khoản người dùng - MyxTech</title>
+    <title>Quản lý người dùng - MyxTech</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -30,6 +30,9 @@
       .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; gap: 16px; }
       .page-header h1 { font-size: 24px; margin-bottom: 8px; }
       .page-header p, .helper { color: var(--text-light); font-size: 14px; }
+      .role-guide { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: -8px 0 24px; }
+      .role-guide article { padding: 14px 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--white); color: var(--text-light); font-size: 13px; line-height: 1.6; }
+      .role-guide strong { display: block; margin-bottom: 4px; color: var(--text-dark); }
       .grid { display: grid; grid-template-columns: minmax(280px, 360px) minmax(0, 1fr); gap: 24px; align-items: start; }
       .card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
       .card-header { padding: 18px 20px; border-bottom: 1px solid var(--border); background: #f9fafb; }
@@ -51,7 +54,7 @@
       .status-disabled { color: #991b1b; background: #fee2e2; }
       .message { min-height: 20px; color: var(--danger); font-size: 13px; margin-top: 12px; }
       @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
-      @media (max-width: 768px) { body { display: block; height: auto; overflow: auto; } .sidebar { display: none; } .main-content { min-height: 100vh; overflow: visible; } .topbar { padding: 10px 16px; } .content-wrapper { padding: 22px 16px 36px; } .page-header { align-items: flex-start; flex-direction: column; } }
+      @media (max-width: 768px) { body { display: block; height: auto; overflow: auto; } .sidebar { display: none; } .main-content { min-height: 100vh; overflow: visible; } .topbar { padding: 10px 16px; } .content-wrapper { padding: 22px 16px 36px; } .page-header { align-items: flex-start; flex-direction: column; } .role-guide { grid-template-columns: 1fr; } }
     </style>
   </head>
   <body>
@@ -75,8 +78,12 @@
       </header>
       <div class="content-wrapper">
         <div class="page-header">
-          <div><h1>Tài khoản người dùng</h1><p>Tạo tài khoản đăng nhập và quản lý quyền truy cập CMMS.</p></div>
+          <div><h1>Quản lý người dùng</h1><p>Tạo tài khoản, phân quyền và kiểm soát quyền truy cập CMMS.</p></div>
         </div>
+        <section class="role-guide" aria-label="Mô tả quyền theo vai trò">
+          <article><strong>Quản trị viên</strong>Quản lý người dùng, danh mục thiết bị và điều chỉnh kho; phê duyệt lệnh khi cần.</article>
+          <article><strong>Kỹ thuật viên</strong>Tạo và xử lý lệnh bảo trì; xuất hoặc hoàn trả vật tư gắn với lệnh đang thực hiện.</article>
+        </section>
         <div class="grid">
           <section class="card">
             <div class="card-header"><h2><i class="fa-solid fa-user-plus"></i> Tạo tài khoản</h2></div>
