@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tài khoản người dùng - MyxTech</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="app.css" />
+    <style>
+      body { display: flex; min-height: 100vh; height: 100vh; overflow: hidden; }
+      .sidebar { width: 260px; background: var(--white); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+      .sidebar-logo { height: 70px; display: flex; align-items: center; padding: 0 24px; font-size: 20px; font-weight: 700; color: var(--primary); border-bottom: 1px solid var(--border); gap: 10px; text-decoration: none; }
+      .logo-icon { width: 28px; height: 28px; background: var(--primary); border-radius: 6px; position: relative; }
+      .logo-icon::after { content: ""; position: absolute; inset: 7px; background: var(--white); border-radius: 3px; }
+      .nav-menu { padding: 20px 12px; flex: 1; }
+      .nav-item { display: flex; align-items: center; padding: 12px 16px; color: var(--text-light); text-decoration: none; border-radius: 8px; margin-bottom: 4px; font-weight: 500; gap: 10px; }
+      .nav-item.active { background: var(--primary-light); color: var(--primary); }
+      .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+      .topbar { height: 70px; background: var(--white); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 0 30px; }
+      .user-profile { display: flex; align-items: center; gap: 12px; }
+      .avatar { width: 40px; height: 40px; background: var(--primary); color: var(--white); border-radius: 50%; display: grid; place-items: center; font-weight: 600; }
+      .content-wrapper { padding: 30px; max-width: 1400px; margin: 0 auto; width: 100%; }
+      .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; gap: 16px; }
+      .page-header h1 { font-size: 24px; margin-bottom: 8px; }
+      .page-header p, .helper { color: var(--text-light); font-size: 14px; }
+      .grid { display: grid; grid-template-columns: minmax(280px, 360px) minmax(0, 1fr); gap: 24px; align-items: start; }
+      .card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+      .card-header { padding: 18px 20px; border-bottom: 1px solid var(--border); background: #f9fafb; }
+      .card-header h2 { font-size: 16px; }
+      .card-body { padding: 20px; }
+      .form-group { margin-bottom: 16px; }
+      .form-group label { display: block; margin-bottom: 7px; font-size: 13px; font-weight: 600; }
+      .form-group input, .form-group select { width: 100%; min-height: 42px; padding: 9px 12px; border: 1px solid var(--border); border-radius: 9px; background: white; }
+      .btn { border: 0; border-radius: 9px; padding: 10px 14px; min-height: 42px; cursor: pointer; font-weight: 600; }
+      .btn-primary { background: var(--primary); color: white; }
+      .btn-danger { background: #fee2e2; color: #991b1b; }
+      .btn:disabled { opacity: .6; cursor: not-allowed; }
+      .table-container { background: white; border: 1px solid var(--border); border-radius: 12px; overflow: auto; }
+      table { width: 100%; border-collapse: collapse; min-width: 650px; }
+      th, td { padding: 14px 16px; border-bottom: 1px solid var(--border); text-align: left; }
+      th { font-size: 12px; color: var(--text-light); background: #f9fafb; }
+      .status { display: inline-flex; padding: 5px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+      .status-active { color: #065f46; background: #d1fae5; }
+      .status-disabled { color: #991b1b; background: #fee2e2; }
+      .message { min-height: 20px; color: var(--danger); font-size: 13px; margin-top: 12px; }
+      @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+      @media (max-width: 768px) { body { display: block; height: auto; overflow: auto; } .sidebar { display: none; } .main-content { min-height: 100vh; overflow: visible; } .topbar { padding: 10px 16px; } .content-wrapper { padding: 22px 16px 36px; } .page-header { align-items: flex-start; flex-direction: column; } }
+    </style>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a href="/dashboard.html" class="sidebar-logo"><span class="logo-icon"></span>MyxTech</a>
+      <nav class="nav-menu" aria-label="Điều hướng chính">
+        <a href="/dashboard.html" class="nav-item"><i class="fa-solid fa-chart-pie"></i>Tổng quan</a>
+        <a href="/items.html" class="nav-item"><i class="fa-solid fa-microchip"></i>Thiết bị</a>
+        <a href="/warehouse.html" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i>Quản lý kho</a>
+        <a href="/reports.html" class="nav-item"><i class="fa-solid fa-file-invoice"></i>Báo cáo</a>
+        <a href="/users.html" class="nav-item active"><i class="fa-solid fa-users"></i>Tài khoản người dùng</a>
+      </nav>
+    </aside>
+    <main class="main-content">
+      <header class="topbar">
+        <div><strong>Quản trị hệ thống</strong></div>
+        <div class="user-profile">
+          <div class="avatar" id="userAvatar">AD</div>
+          <div><div id="userName" style="font-weight:600">Quản trị viên</div><div id="userEmail" style="font-size:12px;color:var(--text-light)"></div></div>
+        </div>
+      </header>
+      <div class="content-wrapper">
+        <div class="page-header">
+          <div><h1>Tài khoản người dùng</h1><p>Tạo tài khoản đăng nhập và quản lý quyền truy cập CMMS.</p></div>
+        </div>
+        <div class="grid">
+          <section class="card">
+            <div class="card-header"><h2><i class="fa-solid fa-user-plus"></i> Tạo tài khoản</h2></div>
+            <div class="card-body">
+              <form id="userForm">
+                <div class="form-group"><label for="new-name">Họ và tên</label><input id="new-name" maxlength="120" autocomplete="name" required /></div>
+                <div class="form-group"><label for="new-email">Email đăng nhập</label><input id="new-email" type="email" maxlength="254" autocomplete="email" required /></div>
+                <div class="form-group"><label for="new-role">Vai trò</label><select id="new-role"><option value="technician">Kỹ thuật viên</option><option value="admin">Quản trị viên</option></select></div>
+                <div class="form-group"><label for="new-password">Mật khẩu tạm thời</label><input id="new-password" type="password" minlength="12" maxlength="256" autocomplete="new-password" required /><p class="helper">Tối thiểu 12 ký tự. Chia sẻ mật khẩu an toàn và yêu cầu người dùng đổi sau khi cấp tài khoản.</p></div>
+                <button class="btn btn-primary" id="createUserButton" type="submit"><i class="fa-solid fa-user-plus"></i> Tạo tài khoản</button>
+                <p id="formMessage" class="message" role="status" aria-live="polite"></p>
+              </form>
+            </div>
+          </section>
+          <section>
+            <div class="page-header"><div><h2>Danh sách tài khoản</h2><p id="userCount">Đang tải...</p></div></div>
+            <div class="table-container">
+              <table>
+                <thead><tr><th>Người dùng</th><th>Email</th><th>Vai trò</th><th>Trạng thái</th><th>Ngày tạo</th><th></th></tr></thead>
+                <tbody id="usersTable"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+    <script>
+      "use strict";
+      let users = [];
+      async function renderUsers() {
+        users = await MyxTech.Users.getAll();
+        const table = document.getElementById("usersTable");
+        const escape = MyxTech.utils.escapeHTML;
+        const currentUser = await MyxTech.User.get();
+        document.getElementById("userCount").textContent = `${users.length} tài khoản`;
+        table.innerHTML = users.map((user) => {
+          const active = user.is_active === 1;
+          const role = user.role === "admin" ? "Quản trị viên" : "Kỹ thuật viên";
+          const action = user.id === currentUser.id
+            ? '<span class="helper">Bạn đang đăng nhập</span>'
+            : `<button class="btn ${active ? "btn-danger" : "btn-primary"}" data-user-id="${user.id}" data-next-state="${active ? "0" : "1"}">${active ? "Vô hiệu hóa" : "Kích hoạt"}</button>`;
+          return `<tr>
+            <td>${escape(user.full_name)}</td><td>${escape(user.email)}</td><td>${role}</td>
+            <td><span class="status ${active ? "status-active" : "status-disabled"}">${active ? "Đang hoạt động" : "Đã vô hiệu hóa"}</span></td>
+            <td>${escape(user.created_at)}</td><td>${action}</td>
+          </tr>`;
+        }).join("");
+      }
+
+      document.getElementById("userForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const button = document.getElementById("createUserButton");
+        const message = document.getElementById("formMessage");
+        button.disabled = true;
+        message.textContent = "";
+        try {
+          const created = await MyxTech.Users.add({
+            full_name: document.getElementById("new-name").value.trim(),
+            email: document.getElementById("new-email").value.trim(),
+            role: document.getElementById("new-role").value,
+            password: document.getElementById("new-password").value,
+          });
+          form.reset();
+          message.style.color = "var(--success)";
+          message.textContent = `Đã tạo tài khoản ${created.email}. Hãy chia sẻ mật khẩu tạm thời qua kênh an toàn.`;
+          await renderUsers();
+        } catch (error) {
+          message.style.color = "var(--danger)";
+          message.textContent = error.message;
+        } finally {
+          button.disabled = false;
+        }
+      });
+
+      document.getElementById("usersTable").addEventListener("click", async (event) => {
+        const button = event.target.closest("button[data-user-id]");
+        if (!button) return;
+        const enable = button.dataset.nextState === "1";
+        const account = users.find((user) => user.id === Number(button.dataset.userId));
+        if (!account || !confirm(`${enable ? "Kích hoạt" : "Vô hiệu hóa"} tài khoản ${account.email}?`)) return;
+        button.disabled = true;
+        try {
+          await MyxTech.Users.setActive(account.id, enable);
+          await renderUsers();
+        } catch (error) {
+          alert(error.message);
+          button.disabled = false;
+        }
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        MyxTech.init().then(async (user) => {
+          if (user.role !== "admin") {
+            location.replace("/dashboard.html");
+            return;
+          }
+          await renderUsers();
+        }).catch((error) => alert(error.message));
+      });
+    </script>
+    <script src="/data-manager.js"></script>
+  </body>
+</html>

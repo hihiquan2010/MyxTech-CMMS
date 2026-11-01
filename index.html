@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MyxTech Pro - Phần mềm Quản lý Bảo trì Hiện đại</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* CSS Variables - Bảng màu chủ đạo */
+      :root {
+        --primary: #2563eb; /* Xanh dương hiện đại */
+        --primary-dark: #1e40af;
+        --secondary: #f3f4f6;
+        --text-dark: #1f2937;
+        --text-light: #6b7280;
+        --white: #ffffff;
+        --border: #e5e7eb;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+
+      body {
+        color: var(--text-dark);
+        background-color: var(--white);
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      /* Header */
+      header {
+        background: var(--white);
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .nav-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 80px;
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+      }
+
+      .logo-icon {
+        width: 32px;
+        height: 32px;
+        background: var(--primary);
+        border-radius: 8px;
+        display: inline-block;
+        position: relative;
+      }
+
+      .logo-icon::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 16px;
+        height: 16px;
+        background: var(--white);
+        border-radius: 4px;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 30px;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: var(--text-dark);
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+
+      .nav-links a:hover {
+        color: var(--primary);
+      }
+
+      .btn {
+        padding: 10px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: var(--white);
+        border: none;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-dark);
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: var(--primary);
+        border: 1px solid var(--primary);
+      }
+
+      .btn-outline:hover {
+        background: var(--secondary);
+      }
+
+      /* Hero Section */
+      .hero {
+        padding: 80px 0;
+        background: linear-gradient(135deg, #f9fafb 0%, #eff6ff 100%);
+        overflow: hidden;
+      }
+
+      .hero-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 50px;
+        align-items: center;
+      }
+
+      .hero-text h1 {
+        font-size: 48px;
+        line-height: 1.2;
+        margin-bottom: 20px;
+        color: var(--text-dark);
+      }
+
+      .hero-text h1 span {
+        color: var(--primary);
+      }
+
+      .hero-text p {
+        font-size: 18px;
+        color: var(--text-light);
+        margin-bottom: 30px;
+      }
+
+      .hero-btns {
+        display: flex;
+        gap: 15px;
+      }
+
+      /* Dashboard Mockup (Tạo bằng CSS để tránh bản quyền hình ảnh) */
+      .dashboard-mockup {
+        background: var(--white);
+        border-radius: 12px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--border);
+        overflow: hidden;
+        transform: perspective(1000px) rotateY(-5deg);
+        transition: transform 0.3s;
+      }
+
+      .dashboard-mockup:hover {
+        transform: perspective(1000px) rotateY(0deg);
+      }
+
+      .mockup-header {
+        background: var(--secondary);
+        padding: 15px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        gap: 8px;
+      }
+
+      .mockup-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #ff5f56;
+      }
+      .mockup-dot:nth-child(2) {
+        background: #ffbd2e;
+      }
+      .mockup-dot:nth-child(3) {
+        background: #27c93f;
+      }
+
+      .mockup-body {
+        padding: 20px;
+      }
+
+      .mockup-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        border-bottom: 1px solid var(--border);
+        font-size: 14px;
+      }
+
+      .mockup-status {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .status-active {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .status-pending {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .status-done {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+
+      /* Features Section */
+      .features {
+        padding: 80px 0;
+        background: var(--white);
+      }
+
+      .section-title {
+        text-align: center;
+        margin-bottom: 60px;
+      }
+
+      .section-title h2 {
+        font-size: 36px;
+        margin-bottom: 15px;
+      }
+
+      .section-title p {
+        color: var(--text-light);
+        font-size: 18px;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .grid-features {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+      }
+
+      .feature-card {
+        padding: 30px;
+        border-radius: 12px;
+        background: var(--white);
+        border: 1px solid var(--border);
+        transition: all 0.3s;
+      }
+
+      .feature-card:hover {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        transform: translateY(-5px);
+        border-color: var(--primary);
+      }
+
+      .feature-icon {
+        width: 50px;
+        height: 50px;
+        background: #eff6ff;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: var(--primary);
+      }
+
+      .feature-card h3 {
+        font-size: 20px;
+        margin-bottom: 15px;
+      }
+
+      .feature-card p {
+        color: var(--text-light);
+        font-size: 15px;
+      }
+
+      /* Ecosystem Section */
+      .ecosystem {
+        padding: 80px 0;
+        background: var(--secondary);
+        text-align: center;
+      }
+
+      .eco-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+        margin-top: 50px;
+      }
+
+      .eco-item {
+        background: var(--white);
+        padding: 40px 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      }
+
+      .eco-icon {
+        font-size: 40px;
+        margin-bottom: 20px;
+      }
+
+      /* Footer */
+      footer {
+        background: var(--text-dark);
+        color: var(--white);
+        padding: 40px 0;
+        text-align: center;
+      }
+
+      footer p {
+        color: #9ca3af;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .hero-content,
+        .grid-features,
+        .eco-grid {
+          grid-template-columns: 1fr;
+        }
+        .nav-links {
+          display: none; /* Ẩn menu trên mobile để đơn giản hóa */
+        }
+        .hero-text h1 {
+          font-size: 32px;
+        }
+        .dashboard-mockup {
+          transform: none;
+          margin-top: 30px;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <div class="container nav-container">
+        <a href="#" class="logo">
+          <div class="logo-icon"></div>
+          MyxTech Pro
+        </a>
+        <nav class="nav-links">
+          <a href="#features">Tính năng</a>
+          <a href="#ecosystem">Hệ sinh thái</a>
+          <a href="#">Giải pháp</a>
+          <a href="#">Liên hệ</a>
+        </nav>
+        <a href="#" class="btn btn-primary">Dùng thử miễn phí</a>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container hero-content">
+        <div class="hero-text">
+          <h1>Nơi Tri Thức Gặp Gỡ <span>Đổi Mới</span> Trong Bảo Trì</h1>
+          <p>
+            Hệ thống quản lý bảo trì thiết bị (CMMS) hiện đại. Tối ưu hóa quy
+            trình làm việc, số hóa 100% giấy tờ và kiểm soát kho vật tư chặt
+            chẽ.
+          </p>
+          <div class="hero-btns">
+            <a href="./login.html" class="btn btn-primary">Bắt đầu ngay</a>
+            <a href="#" class="btn btn-outline">Xem Demo</a>
+          </div>
+        </div>
+
+        <!-- Mockup giao diện (CSS) -->
+        <div class="dashboard-mockup">
+          <div class="mockup-header">
+            <div class="mockup-dot"></div>
+            <div class="mockup-dot"></div>
+            <div class="mockup-dot"></div>
+          </div>
+          <div class="mockup-body">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 15px;
+              "
+            >
+              <strong>Danh sách Công việc</strong>
+              <span style="font-size: 12px; color: var(--text-light)"
+                >Tìm kiếm...</span
+              >
+            </div>
+            <div class="mockup-row">
+              <div>
+                <strong style="display: block; color: var(--primary)"
+                  >#002666</strong
+                >
+                <span style="color: var(--text-light)"
+                  >Bảo trì điều hòa - Tòa nhà A</span
+                >
+              </div>
+              <span class="mockup-status status-pending">Đang chờ</span>
+            </div>
+            <div class="mockup-row">
+              <div>
+                <strong style="display: block; color: var(--primary)"
+                  >#002312</strong
+                >
+                <span style="color: var(--text-light)"
+                  >Kiểm tra định kỳ 3 tháng</span
+                >
+              </div>
+              <span class="mockup-status status-active">Đang làm</span>
+            </div>
+            <div class="mockup-row">
+              <div>
+                <strong style="display: block; color: var(--primary)"
+                  >#002636</strong
+                >
+                <span style="color: var(--text-light)">Thay dầu máy nén</span>
+              </div>
+              <span class="mockup-status status-done">Hoàn thành</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+      <div class="container">
+        <div class="section-title">
+          <h2>Giao diện Hiện đại & Tính năng Vượt trội</h2>
+          <p>
+            Cung cấp mọi công cụ cần thiết cho công tác bảo trì hàng ngày của
+            bạn một cách trực quan nhất.
+          </p>
+        </div>
+
+        <div class="grid-features">
+          <!-- Feature 1: QR/NFC -->
+          <div class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3>Số hóa 100% (QR/NFC)</h3>
+            <p>
+              Quét mã QR hoặc thẻ NFC trên thiết bị để truy cập ngay lập tức
+              thông số kỹ thuật, lịch sử bảo trì và hướng dẫn sửa chữa mà không
+              cần dùng giấy tờ.
+            </p>
+          </div>
+
+          <!-- Feature 2: Quản lý kho -->
+          <div class="feature-card">
+            <div class="feature-icon">📦</div>
+            <h3>Quản lý Kho Tập trung</h3>
+            <p>
+              Kiểm tra mức tồn kho, định mức tối thiểu/tối đa, chi phí đơn vị và
+              lịch sử xuất nhập vật tư. Tạo phiếu yêu cầu cấp vật tư trực tiếp
+              trên hệ thống.
+            </p>
+          </div>
+
+          <!-- Feature 3: Yêu cầu mua sắm -->
+          <div class="feature-card">
+            <div class="feature-icon">🛒</div>
+            <h3>Yêu cầu Mua sắm & Cấp phát</h3>
+            <p>
+              Kỹ thuật viên có thể dễ dàng gửi yêu cầu mua hàng hoặc yêu cầu
+              xuất kho, đính kèm hình ảnh và mô tả lỗi thời gian thực để xử lý
+              nhanh chóng.
+            </p>
+          </div>
+
+          <!-- Feature 5: Chữ ký số -->
+          <div class="feature-card">
+            <div class="feature-icon">✍️</div>
+            <h3>Phê duyệt & Chữ ký số</h3>
+            <p>
+              Cho phép thực hiện và phê duyệt công việc thông qua chữ ký số.
+              Theo dõi trạng thái công việc minh bạch, loại bỏ hoàn toàn quy
+              trình giấy tờ.
+            </p>
+          </div>
+
+          <!-- Feature 6: Dashboard -->
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Bảng điều khiển Tùy biến</h3>
+            <p>
+              Giao diện hiển thị (Responsive) tối ưu cho cả máy tính bảng và PC.
+              Phân quyền truy cập theo từng vai trò, mang lại cái nhìn tổng quan
+              và bảo mật nhất.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ecosystem Section -->
+    <section class="ecosystem" id="ecosystem">
+      <div class="container">
+        <h2>Hệ sinh thái Bảo trì Toàn diện</h2>
+        <div class="eco-grid">
+          <div class="eco-item">
+            <div class="eco-icon">💻</div>
+            <h3>Web App</h3>
+            <p>Quản lý toàn diện trên trình duyệt máy tính.</p>
+          </div>
+          <div class="eco-item">
+            <div class="eco-icon">📱</div>
+            <h3>Mobile App</h3>
+            <p>Kỹ thuật viên thao tác mọi lúc mọi nơi trên điện thoại.</p>
+          </div>
+          <div class="eco-item">
+            <div class="eco-icon">🤖</div>
+            <h3>AI Assistant</h3>
+            <p>Trợ lý ảo thông minh hỗ trợ tra cứu và dự đoán lỗi.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <h2 style="color: var(--white); margin-bottom: 15px">MyxTech Pro</h2>
+        <p>
+          © 2026 Bản quyền thuộc về MyxTech. Thiết kế lấy cảm hứng từ các giải
+          pháp quản lý bảo trì hiện đại.
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

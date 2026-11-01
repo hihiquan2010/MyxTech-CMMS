@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản lý Thiết bị - MyxTech</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #2563eb;
+        --primary-light: #eff6ff;
+        --primary-dark: #1e40af;
+        --text-dark: #1f2937;
+        --text-light: #6b7280;
+        --white: #ffffff;
+        --border: #e5e7eb;
+        --bg-body: #f3f4f6;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+      body {
+        background-color: var(--bg-body);
+        color: var(--text-dark);
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      /* SIDEBAR */
+      .sidebar {
+        width: 260px;
+        background: var(--white);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+      .sidebar-logo {
+        height: 70px;
+        display: flex;
+        align-items: center;
+        padding: 0 24px;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--primary);
+        border-bottom: 1px solid var(--border);
+        gap: 10px;
+        text-decoration: none;
+      }
+      .logo-icon {
+        width: 28px;
+        height: 28px;
+        background: var(--primary);
+        border-radius: 6px;
+        position: relative;
+      }
+      .logo-icon::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 14px;
+        height: 14px;
+        background: var(--white);
+        border-radius: 3px;
+      }
+      .nav-menu {
+        padding: 20px 12px;
+        flex: 1;
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        color: var(--text-light);
+        text-decoration: none;
+        border-radius: 8px;
+        margin-bottom: 4px;
+        transition: all 0.2s;
+        font-weight: 500;
+      }
+      .nav-item i {
+        width: 24px;
+        font-size: 18px;
+        margin-right: 10px;
+      }
+      .nav-item:hover,
+      .nav-item.active {
+        background: var(--primary-light);
+        color: var(--primary);
+      }
+
+      /* MAIN */
+      .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+      }
+      .topbar {
+        height: 70px;
+        background: var(--white);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 30px;
+      }
+      .search-bar {
+        display: flex;
+        align-items: center;
+        background: var(--bg-body);
+        padding: 8px 16px;
+        border-radius: 8px;
+        width: 300px;
+      }
+      .search-bar i {
+        color: var(--text-light);
+        margin-right: 10px;
+      }
+      .search-bar input {
+        border: none;
+        background: transparent;
+        outline: none;
+        width: 100%;
+        font-size: 14px;
+      }
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .avatar {
+        width: 40px;
+        height: 40px;
+        background: var(--primary);
+        color: var(--white);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+      }
+      .content-wrapper {
+        padding: 30px;
+        max-width: 1400px;
+        margin: 0 auto;
+        width: 100%;
+      }
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+      }
+      .page-header h1 {
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+      .page-header p {
+        color: var(--text-light);
+        font-size: 14px;
+      }
+
+      /* BUTTONS */
+      .btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn-primary {
+        background: var(--primary);
+        color: var(--white);
+      }
+      .btn-primary:hover {
+        background: var(--primary-dark);
+      }
+      .btn-outline {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-dark);
+      }
+      .btn-outline:hover {
+        background: var(--bg-body);
+      }
+      .btn-danger-icon {
+        background: none;
+        border: none;
+        color: var(--danger);
+        cursor: pointer;
+        font-size: 14px;
+        padding: 5px;
+        transition: transform 0.2s;
+      }
+      .btn-danger-icon:hover {
+        transform: scale(1.2);
+      }
+      .btn-edit-icon {
+        background: none;
+        border: none;
+        color: var(--primary);
+        cursor: pointer;
+        font-size: 14px;
+        padding: 5px;
+        transition: transform 0.2s;
+      }
+      .btn-edit-icon:hover {
+        transform: scale(1.2);
+      }
+
+      /* STATS */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+      .stat-card {
+        background: var(--white);
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+      }
+      .stat-info h3 {
+        font-size: 24px;
+        margin-bottom: 4px;
+      }
+      .stat-info p {
+        color: var(--text-light);
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      /* TABLE */
+      .table-container {
+        background: var(--white);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+      }
+      .table-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .table-header h2 {
+        font-size: 18px;
+      }
+      .filter-group select {
+        padding: 8px 12px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 14px;
+        outline: none;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+      th {
+        background: #f9fafb;
+        padding: 15px 20px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-light);
+        text-transform: uppercase;
+        border-bottom: 1px solid var(--border);
+      }
+      td {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border);
+        font-size: 14px;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      tr:hover {
+        background: #f9fafb;
+      }
+      .badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+      }
+      .badge-active {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .badge-maintenance {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .badge-down {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: var(--text-light);
+      }
+
+      /* MODAL */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+      .modal-content {
+        background: var(--white);
+        padding: 24px;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 500px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .modal-header h3 {
+        font-size: 18px;
+      }
+      .modal-header button {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: var(--text-light);
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 5px;
+      }
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 14px;
+        outline: none;
+      }
+      .form-group input:focus,
+      .form-group select:focus {
+        border-color: var(--primary);
+      }
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 25px;
+      }
+
+      @media (max-width: 768px) {
+        .sidebar {
+          display: none;
+        }
+        .search-bar {
+          display: none;
+        }
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+        .table-container {
+          overflow-x: auto;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a href="dashboard.html" class="sidebar-logo"
+        ><div class="logo-icon"></div>
+        MyxTech</a
+      >
+      <nav class="nav-menu">
+        <a href="dashboard.html" class="nav-item"
+          ><i class="fa-solid fa-chart-pie"></i> Tổng quan</a
+        >
+        <a href="dashboard.html" class="nav-item"
+          ><i class="fa-solid fa-list-check"></i> Công việc (Works)</a
+        >
+        <a href="items.html" class="nav-item active"
+          ><i class="fa-solid fa-microchip"></i> Thiết bị (Items)</a
+        >
+        <a href="warehouse.html" class="nav-item"
+          ><i class="fa-solid fa-boxes-stacked"></i> Quản lý Kho</a
+        >
+        <a href="reports.html" class="nav-item"
+          ><i class="fa-solid fa-file-invoice"></i> Báo cáo</a
+        >
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="search-bar">
+          <i class="fa-solid fa-search"></i>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Tìm kiếm mã, tên thiết bị..."
+          />
+        </div>
+        <div class="user-profile">
+          <div class="avatar" id="userAvatar">AD</div>
+          <div style="line-height: 1.2">
+            <div style="font-weight: 600; font-size: 14px" id="userName">
+              Quản trị viên
+            </div>
+            <div
+              style="font-size: 12px; color: var(--text-light)"
+              id="userEmail"
+            >
+              admin@myxtech.vn
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content-wrapper">
+        <div class="page-header">
+          <div>
+            <h1>Quản lý Thiết bị</h1>
+            <p>Danh sách toàn bộ máy móc, thiết bị trong hệ thống.</p>
+          </div>
+          <button class="btn btn-primary" data-admin-only data-call="openModal">
+            <i class="fa-solid fa-plus"></i> Thêm thiết bị
+          </button>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div
+              class="stat-icon"
+              style="background: var(--primary-light); color: var(--primary)"
+            >
+              <i class="fa-solid fa-microchip"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="stat-total">0</h3>
+              <p>Tổng thiết bị</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background: #d1fae5; color: #065f46">
+              <i class="fa-solid fa-check-circle"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="stat-active">0</h3>
+              <p>Đang hoạt động</p>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background: #fee2e2; color: #991b1b">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div class="stat-info">
+              <h3 id="stat-down">0</h3>
+              <p>Đang hỏng / Bảo trì</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <div class="table-header">
+            <h2>Danh sách Thiết bị</h2>
+            <div class="filter-group">
+              <select id="filterStatus">
+                <option value="all">Tất cả trạng thái</option>
+                <option value="active">Đang hoạt động</option>
+                <option value="maintenance">Đang bảo trì</option>
+                <option value="down">Đang hỏng</option>
+              </select>
+            </div>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Mã TB</th>
+                <th>Tên Thiết bị</th>
+                <th>Vị trí</th>
+                <th>Ngày mua</th>
+                <th>Trạng thái</th>
+                <th>Lịch sử / thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="items-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="item-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modal-title">Thêm Thiết bị</h3>
+          <button data-call="closeModal">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <input type="hidden" id="edit-index" value="-1" />
+        <div class="form-group">
+          <label>Mã Thiết bị</label
+          ><input type="text" id="i-code" placeholder="VD: AC-0010" required />
+        </div>
+        <div class="form-group">
+          <label>Tên Thiết bị</label
+          ><input
+            type="text"
+            id="i-name"
+            placeholder="VD: Máy nén khí"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label>Vị trí</label
+          ><input
+            type="text"
+            id="i-location"
+            placeholder="VD: Nhà máy A - Khu 2"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label>Ngày mua</label><input type="date" id="i-date" required />
+        </div>
+        <div class="form-group">
+          <label>Trạng thái</label>
+          <select id="i-status">
+            <option value="active">Đang hoạt động</option>
+            <option value="maintenance">Đang bảo trì</option>
+            <option value="down">Đang hỏng</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-outline" data-call="closeModal">Hủy</button>
+          <button class="btn btn-primary" data-call="saveItem">
+            Lưu Thiết bị
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="history-modal">
+      <div class="modal-content" style="max-width:760px">
+        <div class="modal-header">
+          <h3 id="history-title">Lịch sử bảo trì</h3>
+          <button data-call="closeHistory"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div style="overflow:auto">
+          <table>
+            <thead><tr><th>Mã lệnh</th><th>Công việc</th><th>Ngày</th><th>Loại</th><th>Trạng thái</th><th>Phụ trách</th></tr></thead>
+            <tbody id="history-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let items = [];
+      let filterStatus = "all";
+      let searchTerm = "";
+
+      const STATUS_MAP = {
+        active: { label: "Đang hoạt động", class: "badge-active" },
+        maintenance: { label: "Đang bảo trì", class: "badge-maintenance" },
+        down: { label: "Đang hỏng", class: "badge-down" },
+      };
+
+      function formatDate(iso) {
+        if (!iso) return "";
+        const [y, m, d] = iso.split("-");
+        return `${d}/${m}/${y}`;
+      }
+
+      async function renderItems() {
+        items = await MyxTech.Items.getAll();
+        const tbody = document.getElementById("items-tbody");
+        tbody.innerHTML = "";
+
+        const filtered = items.filter((it) => {
+          const matchSearch =
+            it.code.toLowerCase().includes(searchTerm) ||
+            it.name.toLowerCase().includes(searchTerm) ||
+            it.location.toLowerCase().includes(searchTerm);
+          const matchStatus =
+            filterStatus === "all" || it.status === filterStatus;
+          return matchSearch && matchStatus;
+        });
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="empty-state"><i class="fa-solid fa-inbox" style="font-size: 40px; margin-bottom: 10px; display:block;"></i>Không tìm thấy thiết bị nào.</td></tr>`;
+        } else {
+          filtered.forEach((it) => {
+            const st = STATUS_MAP[it.status] || STATUS_MAP.active;
+            const escape = MyxTech.utils.escapeHTML;
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                        <td style="color: var(--primary); font-weight:600;">${escape(it.code)}</td>
+                        <td style="font-weight:500;">${escape(it.name)}</td>
+                        <td>${escape(it.location)}</td>
+                        <td>${formatDate(it.date)}</td>
+                        <td><span class="badge ${st.class}">${st.label}</span></td>
+                        <td style="text-align: right; white-space: nowrap;">
+                            <a class="btn-edit-icon" style="text-decoration:none" href="dashboard.html?assetCode=${encodeURIComponent(it.code)}" title="Tạo lệnh bảo trì"><i class="fa-solid fa-clipboard-list"></i></a>
+                            <button class="btn-edit-icon" data-action="history" data-code="${escape(it.code)}" title="Lịch sử bảo trì"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                            ${document.body.dataset.role === "admin" ? `<button class="btn-edit-icon" data-action="edit" data-code="${escape(it.code)}" title="Sửa"><i class="fa-solid fa-pen"></i></button><button class="btn-danger-icon" data-action="delete" data-code="${escape(it.code)}" title="Xóa"><i class="fa-solid fa-trash"></i></button>` : ""}
+                        </td>
+                    `;
+            tbody.appendChild(tr);
+          });
+        }
+
+        document.getElementById("stat-total").innerText = items.length;
+        document.getElementById("stat-active").innerText = items.filter(
+          (i) => i.status === "active",
+        ).length;
+        document.getElementById("stat-down").innerText = items.filter(
+          (i) => i.status === "down" || i.status === "maintenance",
+        ).length;
+
+      }
+
+      document.getElementById("searchInput").addEventListener("input", (e) => {
+        searchTerm = e.target.value.toLowerCase().trim();
+        renderItems().catch((error) => alert(error.message));
+      });
+      document
+        .getElementById("filterStatus")
+        .addEventListener("change", (e) => {
+          filterStatus = e.target.value;
+          renderItems().catch((error) => alert(error.message));
+        });
+
+      document.getElementById("items-tbody").addEventListener("click", async (event) => {
+        const button = event.target.closest("button[data-action]");
+        if (!button) return;
+        try {
+          if (button.dataset.action === "edit") editItem(button.dataset.code);
+          if (button.dataset.action === "delete") await deleteItem(button.dataset.code);
+          if (button.dataset.action === "history") await showHistory(button.dataset.code);
+        } catch (error) {
+          alert(error.message);
+        }
+      });
+
+      function openModal() {
+        document.getElementById("modal-title").innerText = "Thêm Thiết bị";
+        document.getElementById("edit-index").value = "-1";
+        document.getElementById("i-code").value = "";
+        document.getElementById("i-name").value = "";
+        document.getElementById("i-location").value = "";
+        document.getElementById("i-date").value = MyxTech.utils.today();
+        document.getElementById("i-status").value = "active";
+        document.getElementById("item-modal").style.display = "flex";
+      }
+      function closeModal() {
+        document.getElementById("item-modal").style.display = "none";
+      }
+
+      function editItem(code) {
+        const it = items.find((item) => item.code === code);
+        if (!it) return;
+        document.getElementById("modal-title").innerText = "Chỉnh sửa Thiết bị";
+        document.getElementById("edit-index").value = code;
+        document.getElementById("i-code").value = it.code;
+        document.getElementById("i-name").value = it.name;
+        document.getElementById("i-location").value = it.location;
+        document.getElementById("i-date").value = it.date;
+        document.getElementById("i-status").value = it.status;
+        document.getElementById("item-modal").style.display = "flex";
+      }
+
+      async function saveItem() {
+        const editCode = document.getElementById("edit-index").value;
+        const newItem = {
+          code: document.getElementById("i-code").value.trim(),
+          name: document.getElementById("i-name").value.trim(),
+          location: document.getElementById("i-location").value.trim(),
+          date: document.getElementById("i-date").value,
+          status: document.getElementById("i-status").value,
+        };
+        if (
+          !newItem.code ||
+          !newItem.name ||
+          !newItem.location ||
+          !newItem.date
+        ) {
+          alert("Vui lòng nhập đầy đủ thông tin!");
+          return;
+        }
+        try {
+          if (editCode === "-1") {
+            await MyxTech.Items.add(newItem);
+          } else {
+            await MyxTech.Items.update(editCode, newItem);
+          }
+          closeModal();
+          await renderItems();
+        } catch (error) {
+          alert(error.message);
+        }
+      }
+
+      async function deleteItem(code) {
+        if (confirm(`Bạn có chắc muốn xóa thiết bị "${code}"?`)) {
+          await MyxTech.Items.remove(code);
+          await renderItems();
+        }
+      }
+
+      async function showHistory(code) {
+        const [history, item] = await Promise.all([
+          MyxTech.Items.getHistory(code),
+          Promise.resolve(items.find((entry) => entry.code === code)),
+        ]);
+        document.getElementById("history-title").textContent = `Lịch sử bảo trì · ${item?.name || code}`;
+        const labels = { scheduled: "Đã lên lịch", inprogress: "Đang thực hiện", terminated: "Đã hoàn thành", priority: "Ưu tiên" };
+        const typeLabels = {
+          preventive: "Phòng ngừa",
+          corrective: "Khắc phục",
+          inspection: "Kiểm tra / kiểm định",
+        };
+        document.getElementById("history-tbody").innerHTML = history.length ? history.map((work) => `
+            <tr>
+              <td><a href="work-detail.html?id=${encodeURIComponent(work.code)}">${MyxTech.utils.escapeHTML(work.code)}</a></td>
+              <td>${MyxTech.utils.escapeHTML(work.name)}</td>
+              <td>${formatDate(work.date)}</td>
+              <td>${typeLabels[work.maintenanceType] || "Phòng ngừa"}</td>
+              <td>${labels[work.status] || MyxTech.utils.escapeHTML(work.status)}</td>
+              <td>${MyxTech.utils.escapeHTML(work.assignee || "Chưa phân công")}</td>
+          </tr>`).join("") : '<tr><td colspan="6" class="empty-state">Thiết bị chưa có lệnh bảo trì.</td></tr>';
+        document.getElementById("history-modal").style.display = "flex";
+      }
+
+      function closeHistory() {
+        document.getElementById("history-modal").style.display = "none";
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        MyxTech.init().then(renderItems).catch((error) => alert(error.message));
+      });
+    </script>
+    <script src="data-manager.js"></script>
+  </body>
+</html>

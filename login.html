@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng nhập - MyxTech Pro</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* CSS Variables - Đồng bộ với trang chủ */
+      :root {
+        --primary: #2563eb;
+        --primary-dark: #1e40af;
+        --text-dark: #1f2937;
+        --text-light: #6b7280;
+        --white: #ffffff;
+        --border: #e5e7eb;
+        --bg-light: #f9fafb;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+
+      body {
+        background: linear-gradient(135deg, #f9fafb 0%, #eff6ff 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-dark);
+      }
+
+      .login-container {
+        background: var(--white);
+        padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--border);
+        width: 100%;
+        max-width: 420px;
+        margin: 20px;
+      }
+
+      .logo-area {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--primary);
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+      }
+
+      .logo-icon {
+        width: 32px;
+        height: 32px;
+        background: var(--primary);
+        border-radius: 8px;
+        display: inline-block;
+        position: relative;
+      }
+
+      .logo-icon::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 16px;
+        height: 16px;
+        background: var(--white);
+        border-radius: 4px;
+      }
+
+      .login-header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .login-header h2 {
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+
+      .login-header p {
+        color: var(--text-light);
+        font-size: 14px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        font-size: 14px;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.3s;
+        outline: none;
+      }
+
+      .form-group input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        font-size: 14px;
+      }
+
+      .form-actions label {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        color: var(--text-light);
+      }
+
+      .form-actions a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .form-actions a:hover {
+        text-decoration: underline;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: block;
+        text-align: center;
+        border: none;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: var(--white);
+        margin-bottom: 15px;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-dark);
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: var(--text-dark);
+        border: 1px solid var(--border);
+      }
+
+      .btn-outline:hover {
+        background: var(--bg-light);
+      }
+
+      .divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 25px 0;
+        color: var(--text-light);
+        font-size: 14px;
+      }
+
+      .divider::before,
+      .divider::after {
+        content: "";
+        flex: 1;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .divider::before {
+        margin-right: 10px;
+      }
+      .divider::after {
+        margin-left: 10px;
+      }
+
+      .back-home {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        font-size: 14px;
+        color: var(--text-light);
+        text-decoration: none;
+      }
+
+      .back-home:hover {
+        color: var(--primary);
+      }
+    </style>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="logo-area">
+        <a href="index.html" class="logo">
+          <div class="logo-icon"></div>
+          MyxTech Pro
+        </a>
+      </div>
+
+      <div class="login-header">
+        <h2>Chào mừng trở lại</h2>
+        <p>Đăng nhập để tiếp tục quản lý bảo trì hệ thống của bạn.</p>
+      </div>
+
+      <form id="loginForm" action="#" method="POST">
+        <div class="form-group">
+          <label for="email">Email công việc</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="name@company.com"
+            autocomplete="username"
+            maxlength="254"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Mật khẩu</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            maxlength="256"
+            required
+          />
+        </div>
+
+        <div class="form-actions">
+          <span class="session-note">Phiên làm việc an toàn · 8 giờ</span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Đăng nhập</button>
+        <p id="loginMessage" class="login-message" role="status" aria-live="polite"></p>
+      </form>
+
+      <p class="security-note">Thông tin đăng nhập được xác thực và lưu trữ an toàn trên máy chủ.</p>
+      <a href="index.html" class="back-home">← Quay lại trang chủ</a>
+    </div>
+
+    <script src="./data-manager.js"></script>
+    <script src="./login.js"></script>
+  </body>
+</html>

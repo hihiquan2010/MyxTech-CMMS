@@ -1,0 +1,1051 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chi tiết Công việc - MyxTech</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #2563eb;
+        --primary-light: #eff6ff;
+        --primary-dark: #1e40af;
+        --text-dark: #1f2937;
+        --text-light: #6b7280;
+        --white: #ffffff;
+        --border: #e5e7eb;
+        --bg-body: #f3f4f6;
+        --success: #10b981;
+        --success-light: #d1fae5;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+
+      body {
+        background-color: var(--bg-body);
+        color: var(--text-dark);
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      /* --- SIDEBAR --- */
+      .sidebar {
+        width: 260px;
+        background: var(--white);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .sidebar-logo {
+        height: 70px;
+        display: flex;
+        align-items: center;
+        padding: 0 24px;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--primary);
+        border-bottom: 1px solid var(--border);
+        gap: 10px;
+        text-decoration: none;
+      }
+
+      .logo-icon {
+        width: 28px;
+        height: 28px;
+        background: var(--primary);
+        border-radius: 6px;
+        position: relative;
+      }
+
+      .logo-icon::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 14px;
+        height: 14px;
+        background: var(--white);
+        border-radius: 3px;
+      }
+
+      .nav-menu {
+        padding: 20px 12px;
+        flex: 1;
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        color: var(--text-light);
+        text-decoration: none;
+        border-radius: 8px;
+        margin-bottom: 4px;
+        transition: all 0.2s;
+        font-weight: 500;
+      }
+      .nav-item i {
+        width: 24px;
+        font-size: 18px;
+        margin-right: 10px;
+      }
+      .nav-item:hover,
+      .nav-item.active {
+        background: var(--primary-light);
+        color: var(--primary);
+      }
+
+      /* --- MAIN CONTENT --- */
+      .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+      }
+
+      .topbar {
+        height: 70px;
+        background: var(--white);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 30px;
+      }
+
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .avatar {
+        width: 40px;
+        height: 40px;
+        background: var(--primary);
+        color: var(--white);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+      }
+
+      .content-wrapper {
+        padding: 30px;
+        max-width: 1400px;
+        margin: 0 auto;
+        width: 100%;
+      }
+
+      /* --- PAGE HEADER --- */
+      .page-header {
+        margin-bottom: 24px;
+      }
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-light);
+        text-decoration: none;
+        font-size: 14px;
+        margin-bottom: 15px;
+        transition: color 0.2s;
+      }
+      .back-link:hover {
+        color: var(--primary);
+      }
+
+      .header-title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+
+      .title-group h1 {
+        font-size: 28px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .title-group p {
+        color: var(--text-light);
+        font-size: 15px;
+      }
+
+      .status-badge {
+        padding: 6px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        background: #dbeafe;
+        color: #1e40af;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.3s;
+      }
+
+      /* Nút bấm */
+      .btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn-primary {
+        background: var(--primary);
+        color: var(--white);
+      }
+      .btn-primary:hover {
+        background: var(--primary-dark);
+      }
+      .btn-success {
+        background: var(--success);
+        color: var(--white);
+      }
+      .btn-success:hover {
+        background: #059669;
+      }
+      .btn-success:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+      }
+      .btn-outline {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-dark);
+      }
+      .btn-outline:hover {
+        background: var(--bg-body);
+      }
+      .btn-danger-icon {
+        background: none;
+        border: none;
+        color: var(--danger);
+        cursor: pointer;
+        font-size: 16px;
+        padding: 5px;
+        transition: transform 0.2s;
+      }
+      .btn-danger-icon:hover {
+        transform: scale(1.2);
+      }
+
+      /* --- GRID LAYOUT --- */
+      .detail-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+      }
+
+      /* --- CARDS --- */
+      .card {
+        background: var(--white);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        margin-bottom: 24px;
+        overflow: hidden;
+      }
+      .card-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f9fafb;
+      }
+      .card-header h2 {
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .card-header h2 i {
+        color: var(--primary);
+      }
+      .card-body {
+        padding: 20px;
+      }
+
+      /* Thông tin chi tiết */
+      .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      .info-item label {
+        display: block;
+        font-size: 13px;
+        color: var(--text-light);
+        margin-bottom: 5px;
+        font-weight: 500;
+      }
+      .info-item .value {
+        font-size: 15px;
+        font-weight: 500;
+      }
+
+      .description-box {
+        margin-top: 20px;
+        padding: 15px;
+        background: var(--bg-body);
+        border-radius: 8px;
+        font-size: 14px;
+        line-height: 1.6;
+        color: var(--text-dark);
+      }
+
+      /* Vật tư sử dụng (Bảng) */
+      .table-parts {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+      .table-parts th {
+        text-align: left;
+        padding: 12px 15px;
+        border-bottom: 1px solid var(--border);
+        color: var(--text-light);
+        font-weight: 500;
+        background: #f9fafb;
+      }
+      .table-parts td {
+        padding: 12px 15px;
+        border-bottom: 1px solid var(--border);
+      }
+      .table-parts tfoot td {
+        border-bottom: none;
+        padding: 20px 15px;
+        font-size: 15px;
+      }
+      .table-parts tr:last-child td {
+        border-bottom: none;
+      }
+
+      /* --- MODAL (Form nhập vật tư) --- */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+      .modal-content {
+        background: var(--white);
+        padding: 24px;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 450px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      }
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .modal-header h3 {
+        font-size: 18px;
+      }
+      .modal-header button {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: var(--text-light);
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-group label {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 5px;
+      }
+      .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        font-size: 14px;
+        outline: none;
+      }
+      .form-group input:focus {
+        border-color: var(--primary);
+      }
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 25px;
+      }
+
+      /* Chữ ký số */
+      .signature-box {
+        border: 2px dashed var(--border);
+        border-radius: 8px;
+        height: 120px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-light);
+        cursor: pointer;
+        transition: all 0.2s;
+        background: #f9fafb;
+      }
+      .signature-box:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: var(--primary-light);
+      }
+      .signature-box i {
+        font-size: 32px;
+        margin-bottom: 10px;
+      }
+
+      /* Style cho chữ ký điện tử sau khi ký */
+      .signed-success {
+        border-color: var(--success) !important;
+        background: var(--success-light) !important;
+        color: var(--success) !important;
+        cursor: default;
+      }
+
+      /* --- RESPONSIVE --- */
+      @media (max-width: 1024px) {
+        .detail-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 768px) {
+        .sidebar {
+          display: none;
+        }
+        .header-title-row {
+          flex-direction: column;
+          gap: 15px;
+        }
+        .info-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <a href="dashboard.html" class="sidebar-logo">
+        <div class="logo-icon"></div>
+        MyxTech
+      </a>
+      <nav class="nav-menu">
+        <a href="dashboard.html" class="nav-item">
+          <i class="fa-solid fa-chart-pie"></i> Tổng quan
+        </a>
+        <a href="dashboard.html" class="nav-item active">
+          <i class="fa-solid fa-list-check"></i> Công việc (Works)
+        </a>
+        <a href="#" class="nav-item">
+          <i class="fa-solid fa-microchip"></i> Thiết bị (Items)
+        </a>
+        <a href="#" class="nav-item">
+          <i class="fa-solid fa-boxes-stacked"></i> Quản lý Kho
+        </a>
+        <a href="#" class="nav-item">
+          <i class="fa-solid fa-file-invoice"></i> Báo cáo
+        </a>
+      </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <header class="topbar">
+        <div style="font-weight: 500; color: var(--text-light)">
+          Chi tiết Công việc
+        </div>
+        <div class="user-profile">
+          <div class="avatar">AD</div>
+          <div style="line-height: 1.2">
+            <div style="font-weight: 600; font-size: 14px">Quản trị viên</div>
+            <div style="font-size: 12px; color: var(--text-light)">
+              admin@myxtech.vn
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content-wrapper">
+        <!-- HEADER -->
+        <div class="page-header">
+          <a href="dashboard.html" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách
+          </a>
+          <div class="header-title-row">
+            <div class="title-group">
+              <h1>
+                <a href="#" style="color: var(--primary); text-decoration: none"
+                  >WORK.002312</a
+                >
+                <span class="status-badge" id="work-status">
+                  <i class="fa-solid fa-spinner"></i> Đang thực hiện
+                </span>
+              </h1>
+              <p>Kiểm tra định kỳ hàng tháng (Monthly Inspection)</p>
+            </div>
+            <div style="display: flex; gap: 10px">
+              <button class="btn btn-outline" data-call="printPage">
+                <i class="fa-solid fa-print"></i> In
+              </button>
+              <button
+                class="btn btn-success"
+                id="btn-complete"
+                data-call="completeWork"
+              >
+                <i class="fa-solid fa-check"></i> Hoàn thành
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- GRID CHI TIẾT -->
+        <div class="detail-grid">
+          <!-- CỘT TRÁI: THÔNG TIN & VẬT TƯ -->
+          <div class="left-col">
+            <!-- Thông tin công việc -->
+            <div class="card">
+              <div class="card-header">
+                <h2><i class="fa-solid fa-circle-info"></i> Thông tin chung</h2>
+              </div>
+              <div class="card-body">
+                <div class="info-grid">
+                  <div class="info-item">
+                    <label>Thiết bị / Hệ thống</label>
+                    <div class="value" id="work-asset" style="color: var(--primary)">
+                      ACC-0001 - Máy nén khí (Air Compressor)
+                    </div>
+                  </div>
+                  <div class="info-item">
+                    <label>Vị trí (Location)</label>
+                    <div class="value" id="work-location">-</div>
+                  </div>
+                  <div class="info-item">
+                    <label>Người phụ trách chính</label>
+                    <div class="value" id="work-assignee-info">-</div>
+                  </div>
+                  <div class="info-item">
+                    <label>Ngày dự kiến / bắt đầu</label>
+                    <div class="value" id="work-date">-</div>
+                  </div>
+                  <div class="info-item">
+                    <label>Mức độ ưu tiên</label>
+                    <div
+                      class="value"
+                      id="work-priority"
+                      style="color: var(--warning); font-weight: 600"
+                    >
+                      Bình thường (Normal)
+                    </div>
+                  </div>
+                  <div class="info-item">
+                    <label>Loại công việc</label>
+                    <div class="value" id="work-type">-</div>
+                  </div>
+                </div>
+
+                <div style="margin-top: 20px">
+                  <label
+                    style="
+                      font-size: 13px;
+                      color: var(--text-light);
+                      font-weight: 500;
+                    "
+                  >
+                    Mô tả chi tiết
+                  </label>
+                  <div class="description-box">
+                    Kiểm tra áp suất hệ thống, vệ sinh lọc gió, kiểm tra mức dầu
+                    máy nén. Thay thế dầu nếu cần thiết. Đảm bảo máy hoạt động
+                    trong ngưỡng an toàn (dưới 8 bar).
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h2><i class="fa-solid fa-clock-rotate-left"></i> Nhật ký bảo trì</h2>
+              </div>
+              <div class="card-body">
+                <div id="work-events" aria-live="polite"></div>
+                <label for="work-note" style="display:block; margin-top:16px; font-size:13px; color:var(--text-light)">Ghi chú kỹ thuật</label>
+                <textarea id="work-note" rows="3" maxlength="2000" placeholder="Ghi nhận kiểm tra, nguyên nhân, biện pháp xử lý..."></textarea>
+                <button class="btn btn-outline" style="margin-top:10px" data-call="saveWorkNote">Thêm ghi chú</button>
+              </div>
+            </div>
+
+            <!-- Vật tư sử dụng -->
+            <div class="card">
+              <div class="card-header">
+                <h2>
+                  <i class="fa-solid fa-boxes-stacked"></i> Vật tư / Phụ tùng sử
+                  dụng
+                </h2>
+                <!-- Mở form thêm vật tư -->
+                <button
+                  class="btn btn-outline"
+                  style="padding: 5px 10px; font-size: 13px"
+                  data-call="openModal"
+                >
+                  <i class="fa-solid fa-plus"></i> Thêm vật tư
+                </button>
+              </div>
+              <div class="card-body" style="padding: 0">
+                <table class="table-parts">
+                  <thead>
+                    <tr>
+                      <th>Mã VT</th>
+                      <th>Tên Vật tư</th>
+                      <th>Nhân viên</th>
+                      <th>SL</th>
+                      <th>Đơn giá</th>
+                      <th>Tổng</th>
+                      <th></th>
+                      <!-- Cột cho nút Xóa -->
+                    </tr>
+                  </thead>
+                  <tbody id="parts-tbody">
+                    <!-- Dữ liệu sẽ được render bằng JS -->
+                  </tbody>
+                  <tfoot>
+                    <tr style="background-color: #f9fafb">
+                      <td
+                        colspan="5"
+                        style="text-align: right; font-weight: 600"
+                      >
+                        Tổng cộng:
+                      </td>
+                      <td
+                        id="grand-total"
+                        style="
+                          font-weight: 700;
+                          color: var(--primary);
+                          font-size: 16px;
+                        "
+                      >
+                        0đ
+                      </td>
+                      <td></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- CỘT PHẢI: PHÊ DUYỆT -->
+          <div class="right-col">
+            <div class="card">
+              <div class="card-header">
+                <h2>
+                  <i class="fa-solid fa-signature"></i> Phê duyệt công việc
+                </h2>
+              </div>
+              <div class="card-body">
+                <p
+                  style="
+                    font-size: 14px;
+                    margin-bottom: 15px;
+                    color: var(--text-dark);
+                  "
+                >
+                  Quản trị viên phê duyệt và lưu xác nhận trên máy chủ.
+                </p>
+                <!-- Khung ký gọi hàm JS -->
+                <div
+                  class="signature-box"
+                  id="signature-box"
+                  data-admin-only
+                  data-call="signWork"
+                  role="button"
+                  tabindex="0"
+                  aria-label="Phê duyệt công việc"
+                >
+                  <i class="fa-solid fa-pen-nib"></i>
+                  <span>Nhấn để ký tên</span>
+                </div>
+
+                <div
+                  style="
+                    margin-top: 20px;
+                    border-top: 1px solid var(--border);
+                    padding-top: 15px;
+                  "
+                >
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      font-size: 13px;
+                      margin-bottom: 8px;
+                    "
+                  >
+                    <span style="color: var(--text-light)">Người phụ trách:</span>
+                    <span id="work-assignee">Chưa phân công</span>
+                  </div>
+                  <div
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      font-size: 13px;
+                    "
+                  >
+                    <span style="color: var(--text-light)">Người duyệt:</span>
+                    <span style="color: var(--warning)" id="approve-status"
+                      >Chờ duyệt...</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- MODAL THÊM VẬT TƯ -->
+    <div class="modal-overlay" id="material-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Thêm Vật tư / Phụ tùng</h3>
+          <button data-call="closeModal">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="form-group">
+          <label>Vật tư trong kho</label>
+          <select id="input-code" required></select>
+        </div>
+        <div style="display: flex; gap: 10px">
+          <div class="form-group" style="flex: 1">
+            <label>Số lượng</label>
+            <input type="number" id="input-qty" min="1" value="1" required />
+          </div>
+        </div>
+        <p id="material-availability" style="font-size:13px; color:var(--text-light); margin-bottom:12px"></p>
+        <div class="modal-actions">
+          <button class="btn btn-outline" data-call="closeModal">Hủy</button>
+          <button class="btn btn-primary" data-call="saveMaterial">
+            Lưu Vật Tư
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Lấy ?id= trên URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const workCode = urlParams.get("id");
+
+      // Biến cục bộ
+      let materials = [];
+      let currentWork = null;
+
+      // ============================================================
+      // LOAD DỮ LIỆU TỪ MODULE CHUNG
+      // ============================================================
+      async function loadWork() {
+        if (!workCode) {
+          console.warn("Thiếu ?id= trên URL");
+          return;
+        }
+        currentWork = await MyxTech.Works.getById(workCode);
+        if (!currentWork) {
+          alert("Không tìm thấy công việc: " + workCode);
+          window.location.replace("dashboard.html");
+          return;
+        }
+        await renderWorkInfo();
+        await Promise.all([loadMaterials(), loadWorkEvents()]);
+      }
+
+      async function renderWorkInfo() {
+        const w = currentWork;
+        if (!w) return;
+
+        // Header
+        const h1Link = document.querySelector(".title-group h1 a");
+        h1Link.innerText = "WORK." + w.code;
+        h1Link.href = `work-detail.html?id=${encodeURIComponent(w.code)}`;
+        document.querySelector(".title-group p").innerText = w.name;
+
+        // Status badge
+        const statusBadge = document.getElementById("work-status");
+        const statusMap = {
+          inprogress: {
+            label: "Đang thực hiện",
+            bg: "#DBEAFE",
+            color: "#1E40AF",
+            icon: "fa-spinner",
+          },
+          terminated: {
+            label: "Đã hoàn thành",
+            bg: "#D1FAE5",
+            color: "#065F46",
+            icon: "fa-check-circle",
+          },
+          scheduled: {
+            label: "Đã lên lịch",
+            bg: "#FEF3C7",
+            color: "#92400E",
+            icon: "fa-clock",
+          },
+          priority: {
+            label: "Ưu tiên",
+            bg: "#FEE2E2",
+            color: "#991B1B",
+            icon: "fa-exclamation-circle",
+          },
+        };
+        const st = statusMap[w.status] || statusMap.scheduled;
+        statusBadge.style.background = st.bg;
+        statusBadge.style.color = st.color;
+        statusBadge.innerHTML = `<i class="fa-solid ${st.icon}"></i> ${st.label}`;
+
+        // Info
+        document.getElementById("work-asset").innerText = w.equip;
+        const assets = await MyxTech.Items.getAll();
+        const asset = assets.find((item) => item.code === w.assetCode);
+        document.getElementById("work-location").innerText = asset?.location || "Chưa liên kết thiết bị";
+        document.getElementById("work-assignee-info").innerText = w.assignee || "Chưa phân công";
+        document.getElementById("work-assignee").textContent =
+          w.assignee || "Chưa phân công";
+        document.getElementById("work-date").innerText =
+          `${MyxTech.utils.formatDate(w.date)}${w.startedAt ? ` · Bắt đầu ${w.startedAt}` : ""}`;
+        document.getElementById("work-priority").innerText =
+          w.priority === "high" ? "Cao" : "Bình thường";
+        document.getElementById("work-type").innerText = ({
+          preventive: "Bảo trì phòng ngừa",
+          corrective: "Sửa chữa khắc phục",
+          inspection: "Kiểm tra / kiểm định",
+        })[w.maintenanceType] || "Bảo trì phòng ngừa";
+
+        // Mô tả
+        const descBox = document.querySelector(".description-box");
+        descBox.innerText = w.desc || "Chưa có mô tả chi tiết.";
+
+        // Nếu đã terminated -> disable nút Hoàn thành
+        const btn = document.getElementById("btn-complete");
+        btn.disabled = w.status === "terminated";
+        btn.innerHTML = w.status === "scheduled" || w.status === "priority"
+          ? '<i class="fa-solid fa-play"></i> Bắt đầu'
+          : w.status === "terminated"
+            ? '<i class="fa-solid fa-check"></i> Đã hoàn thành'
+            : '<i class="fa-solid fa-check"></i> Hoàn thành';
+        document.querySelector('[data-call="openModal"]').hidden = w.status !== "inprogress" || Boolean(w.approvedBy);
+        document.getElementById("work-note").disabled = w.status === "terminated" || Boolean(w.approvedBy);
+        document.querySelector('[data-call="saveWorkNote"]').hidden = w.status === "terminated" || Boolean(w.approvedBy);
+        document.getElementById("signature-box").hidden = !w.approvedBy && w.status !== "terminated";
+        const approvalStatus = document.getElementById("approve-status");
+        const signBox = document.getElementById("signature-box");
+        if (w.approvedBy) {
+          signBox.classList.add("signed-success");
+          signBox.textContent = `Đã phê duyệt bởi ${w.approvedBy}`;
+          approvalStatus.textContent = `Đã phê duyệt bởi ${w.approvedBy}`;
+          approvalStatus.style.color = "var(--success)";
+        } else {
+          signBox.classList.remove("signed-success");
+          approvalStatus.textContent = "Chờ duyệt...";
+          approvalStatus.style.color = "var(--warning)";
+        }
+      }
+
+      // ============================================================
+      // QUẢN LÝ VẬT TƯ (dùng MyxTech.Materials)
+      // ============================================================
+      async function loadMaterials() {
+        materials = await MyxTech.Materials.getByWork(workCode);
+        renderTable();
+      }
+
+      async function loadWorkEvents() {
+        const events = await MyxTech.Works.getEvents(workCode);
+        const container = document.getElementById("work-events");
+        const escape = MyxTech.utils.escapeHTML;
+        container.innerHTML = events.length ? events.map((event) => `
+          <div style="padding:10px 0; border-bottom:1px solid var(--border)">
+            <strong>${escape(event.note)}</strong>
+            <div style="font-size:12px; color:var(--text-light); margin-top:4px">${escape(event.actor || "Hệ thống")} · ${escape(event.createdAt)}</div>
+          </div>`).join("") : '<p style="color:var(--text-light)">Chưa có hoạt động ghi nhận.</p>';
+      }
+
+      function renderTable() {
+        const tbody = document.getElementById("parts-tbody");
+        tbody.innerHTML = "";
+        let grandTotal = 0;
+        const canReturn = currentWork?.status === "inprogress" && !currentWork.approvedBy;
+
+        materials.forEach((item) => {
+          const rowTotal = item.qty * item.price;
+          grandTotal += rowTotal;
+          const escape = MyxTech.utils.escapeHTML;
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+                <td>${escape(item.code)}</td>
+                <td>${escape(item.name)}</td>
+                <td>${escape(item.staff)}</td>
+                <td>${item.qty}</td>
+                <td>${MyxTech.utils.formatVND(item.price)}</td>
+                <td>${MyxTech.utils.formatVND(rowTotal)}</td>
+                <td>${canReturn ? `<button class="btn-danger-icon" data-material-id="${escape(item.id)}" title="Hoàn trả vật tư" aria-label="Hoàn trả ${escape(item.name)} về kho"><i class="fa-solid fa-rotate-left"></i></button>` : ""}</td>
+            `;
+          tbody.appendChild(tr);
+        });
+
+        document.getElementById("grand-total").innerText =
+          MyxTech.utils.formatVND(grandTotal);
+      }
+
+      function openModal() {
+        MyxTech.Warehouse.getAll().then((items) => {
+          const select = document.getElementById("input-code");
+          select.innerHTML = `<option value="">Chọn vật tư...</option>` + items.map((item) =>
+            `<option value="${MyxTech.utils.escapeHTML(item.code)}">${MyxTech.utils.escapeHTML(item.code)} — ${MyxTech.utils.escapeHTML(item.name)} (tồn ${item.qty} ${MyxTech.utils.escapeHTML(item.unit)})</option>`
+          ).join("");
+          document.getElementById("input-qty").value = "1";
+          document.getElementById("material-availability").textContent = "";
+        }).catch((error) => alert(error.message));
+        document.getElementById("material-modal").style.display = "flex";
+      }
+      function closeModal() {
+        document.getElementById("material-modal").style.display = "none";
+      }
+
+      document.getElementById("parts-tbody").addEventListener("click", async (event) => {
+        const button = event.target.closest("button[data-material-id]");
+        if (!button) return;
+        try {
+          await deleteMaterial(button.dataset.materialId);
+        } catch (error) {
+          alert(error.message);
+        }
+      });
+
+      document.getElementById("input-code").addEventListener("change", () => {
+        const selected = document.getElementById("input-code");
+        document.getElementById("material-availability").textContent =
+          selected.selectedOptions[0]?.textContent || "";
+      });
+
+      async function saveMaterial() {
+        const code = document.getElementById("input-code").value.trim();
+        const qty = parseInt(document.getElementById("input-qty").value);
+
+        if (!code || isNaN(qty) || qty <= 0) {
+          alert("Vui lòng chọn vật tư và nhập số lượng hợp lệ.");
+          return;
+        }
+
+        try {
+          await MyxTech.Materials.add(workCode, { code, qty });
+          await loadMaterials();
+          await loadWorkEvents();
+          closeModal();
+        } catch (error) {
+          alert(error.message);
+        }
+      }
+
+      async function deleteMaterial(materialId) {
+        if (confirm("Bạn có chắc muốn xóa vật tư này?")) {
+          await MyxTech.Materials.remove(workCode, materialId);
+          await loadMaterials();
+          await loadWorkEvents();
+        }
+      }
+
+      // ============================================================
+      // HOÀN THÀNH & KÝ SỐ (Cập nhật ngược về Dashboard)
+      // ============================================================
+      async function completeWork() {
+        if (!currentWork) return;
+        try {
+          if (currentWork.status === "scheduled" || currentWork.status === "priority") {
+            await MyxTech.Works.start(currentWork.code);
+          } else {
+            await MyxTech.Works.complete(currentWork.code);
+          }
+          await loadWork();
+        } catch (err) {
+          alert("Lỗi: " + err.message);
+        }
+      }
+
+      async function saveWorkNote() {
+        const input = document.getElementById("work-note");
+        const note = input.value.trim();
+        if (!note) {
+          alert("Vui lòng nhập nội dung ghi chú.");
+          return;
+        }
+        try {
+          await MyxTech.Works.addEvent(workCode, note);
+          input.value = "";
+          await loadWorkEvents();
+        } catch (error) {
+          alert(error.message);
+        }
+      }
+
+      async function signWork() {
+        const signBox = document.getElementById("signature-box");
+        if (signBox.classList.contains("signed-success")) return;
+        try {
+          await MyxTech.Works.approve(workCode);
+          await loadWork();
+        } catch (error) {
+          alert(error.message);
+        }
+      }
+
+      // ============================================================
+      // KHỞI CHẠY
+      // ============================================================
+      document.addEventListener("DOMContentLoaded", () => {
+        MyxTech.init().then(loadWork).catch((error) => alert(error.message));
+      });
+    </script>
+    <script src="data-manager.js"></script>
+  </body>
+</html>

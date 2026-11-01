@@ -1,0 +1,565 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Báo cáo - MyxTech</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #2563eb;
+        --primary-light: #eff6ff;
+        --primary-dark: #1e40af;
+        --text-dark: #1f2937;
+        --text-light: #6b7280;
+        --white: #ffffff;
+        --border: #e5e7eb;
+        --bg-body: #f3f4f6;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+      body {
+        background-color: var(--bg-body);
+        color: var(--text-dark);
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+      .sidebar {
+        width: 260px;
+        background: var(--white);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+      .sidebar-logo {
+        height: 70px;
+        display: flex;
+        align-items: center;
+        padding: 0 24px;
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--primary);
+        border-bottom: 1px solid var(--border);
+        gap: 10px;
+        text-decoration: none;
+      }
+      .logo-icon {
+        width: 28px;
+        height: 28px;
+        background: var(--primary);
+        border-radius: 6px;
+        position: relative;
+      }
+      .logo-icon::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 14px;
+        height: 14px;
+        background: var(--white);
+        border-radius: 3px;
+      }
+      .nav-menu {
+        padding: 20px 12px;
+        flex: 1;
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        color: var(--text-light);
+        text-decoration: none;
+        border-radius: 8px;
+        margin-bottom: 4px;
+        transition: all 0.2s;
+        font-weight: 500;
+      }
+      .nav-item i {
+        width: 24px;
+        font-size: 18px;
+        margin-right: 10px;
+      }
+      .nav-item:hover,
+      .nav-item.active {
+        background: var(--primary-light);
+        color: var(--primary);
+      }
+      .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+      }
+      .topbar {
+        height: 70px;
+        background: var(--white);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 30px;
+      }
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .avatar {
+        width: 40px;
+        height: 40px;
+        background: var(--primary);
+        color: var(--white);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+      }
+      .content-wrapper {
+        padding: 30px;
+        max-width: 1400px;
+        margin: 0 auto;
+        width: 100%;
+      }
+      .page-header {
+        margin-bottom: 24px;
+      }
+      .page-header h1 {
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+      .page-header p {
+        color: var(--text-light);
+        font-size: 14px;
+      }
+      .btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn-primary {
+        background: var(--primary);
+        color: var(--white);
+      }
+      .btn-primary:hover {
+        background: var(--primary-dark);
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 24px;
+      }
+      .card {
+        background: var(--white);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+      }
+      .card-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border);
+        background: #f9fafb;
+      }
+      .card-header h2 {
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .card-header h2 i {
+        color: var(--primary);
+      }
+      .card-body {
+        padding: 20px;
+      }
+
+      .report-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+      .report-table th {
+        text-align: left;
+        padding: 10px;
+        border-bottom: 1px solid var(--border);
+        color: var(--text-light);
+        font-weight: 500;
+      }
+      .report-table td {
+        padding: 12px 10px;
+        border-bottom: 1px solid var(--border);
+      }
+      .report-table tr:last-child td {
+        border-bottom: none;
+      }
+      .report-table tfoot td {
+        font-weight: 700;
+        color: var(--primary);
+        border-top: 2px solid var(--border);
+      }
+
+      /* Biểu đồ cột CSS */
+      .chart-container {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-around;
+        height: 200px;
+        padding-top: 20px;
+        gap: 15px;
+      }
+      .chart-bar-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+      }
+      .chart-bar {
+        width: 100%;
+        max-width: 60px;
+        border-radius: 6px 6px 0 0;
+        transition: height 0.5s ease;
+        position: relative;
+      }
+      .chart-bar:hover {
+        opacity: 0.8;
+      }
+      .chart-label {
+        margin-top: 10px;
+        font-size: 13px;
+        color: var(--text-light);
+        text-align: center;
+      }
+      .chart-value {
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 5px;
+      }
+
+      @media (max-width: 768px) {
+        .sidebar {
+          display: none;
+        }
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a href="dashboard.html" class="sidebar-logo"
+        ><div class="logo-icon"></div>
+        MyxTech</a
+      >
+      <nav class="nav-menu">
+        <a href="dashboard.html" class="nav-item"
+          ><i class="fa-solid fa-chart-pie"></i> Tổng quan</a
+        >
+        <a href="dashboard.html" class="nav-item"
+          ><i class="fa-solid fa-list-check"></i> Công việc (Works)</a
+        >
+        <a href="items.html" class="nav-item"
+          ><i class="fa-solid fa-microchip"></i> Thiết bị (Items)</a
+        >
+        <a href="warehouse.html" class="nav-item"
+          ><i class="fa-solid fa-boxes-stacked"></i> Quản lý Kho</a
+        >
+        <a href="reports.html" class="nav-item active"
+          ><i class="fa-solid fa-file-invoice"></i> Báo cáo</a
+        >
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div style="font-weight: 500; color: var(--text-light)">
+          Báo cáo Tổng hợp
+        </div>
+        <div class="user-profile">
+          <div class="avatar" id="userAvatar">AD</div>
+          <div style="line-height: 1.2">
+            <div style="font-weight: 600; font-size: 14px" id="userName">
+              Quản trị viên
+            </div>
+            <div
+              style="font-size: 12px; color: var(--text-light)"
+              id="userEmail"
+            >
+              admin@myxtech.vn
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content-wrapper">
+        <div class="page-header" style="display:flex; justify-content:space-between; align-items:center; gap:16px">
+          <h1>Báo cáo & Phân tích</h1>
+          <div>
+            <p>Số liệu tổng hợp thời gian thực từ dữ liệu của bạn.</p>
+            <button class="btn btn-primary" style="margin-top:10px" data-call="exportReport">
+              <i class="fa-solid fa-file-csv"></i> Xuất CSV
+            </button>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- Cột 1: Trạng thái công việc -->
+          <div class="card">
+            <div class="card-header">
+              <h2>
+                <i class="fa-solid fa-chart-simple"></i> Trạng thái Công việc
+              </h2>
+            </div>
+            <div class="card-body">
+              <div class="chart-container" id="chart-works"></div>
+            </div>
+          </div>
+
+          <!-- Cột 2: Trạng thái thiết bị -->
+          <div class="card">
+            <div class="card-header">
+              <h2><i class="fa-solid fa-microchip"></i> Trạng thái Thiết bị</h2>
+            </div>
+            <div class="card-body">
+              <div class="chart-container" id="chart-items"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bảng tổng hợp -->
+        <div class="card">
+          <div class="card-header">
+            <h2><i class="fa-solid fa-table"></i> Bảng tổng hợp số liệu</h2>
+          </div>
+          <div class="card-body">
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>Hạng mục</th>
+                  <th>Số lượng</th>
+                  <th>Ghi chú</th>
+                </tr>
+              </thead>
+              <tbody id="summary-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      function formatVND(amount) {
+        return amount.toLocaleString("vi-VN") + "đ";
+      }
+
+      let reportData = null;
+
+      async function renderReports() {
+        const [works, items, warehouse, metrics] = await Promise.all([
+          MyxTech.Works.getAll(),
+          MyxTech.Items.getAll(),
+          MyxTech.Warehouse.getAll(),
+          MyxTech.Reports.getSummary(),
+        ]);
+        reportData = { works, items, warehouse, metrics };
+
+        // 1. Chart Công việc
+        const workStats = {
+          inprogress: works.filter((w) => w.status === "inprogress").length,
+          terminated: works.filter((w) => w.status === "terminated").length,
+          scheduled: works.filter((w) => w.status === "scheduled").length,
+          priority: works.filter((w) => w.status === "priority").length,
+        };
+        const workColors = {
+          inprogress: "#3B82F6",
+          terminated: "#10B981",
+          scheduled: "#F59E0B",
+          priority: "#EF4444",
+        };
+        const workLabels = {
+          inprogress: "Đang làm",
+          terminated: "Đã xong",
+          scheduled: "Đã lên lịch",
+          priority: "Ưu tiên",
+        };
+
+        const chartWorks = document.getElementById("chart-works");
+        const maxWork = Math.max(1, ...Object.values(workStats));
+        chartWorks.innerHTML = "";
+        Object.keys(workStats).forEach((key) => {
+          const value = workStats[key];
+          const heightPercent = (value / maxWork) * 100;
+          chartWorks.innerHTML += `
+                    <div class="chart-bar-wrapper">
+                        <div class="chart-value">${value}</div>
+                        <div class="chart-bar" style="height: ${Math.max(heightPercent, 2)}%; background: ${workColors[key]};"></div>
+                        <div class="chart-label">${workLabels[key]}</div>
+                    </div>
+                `;
+        });
+
+        // 2. Chart Thiết bị
+        const itemStats = {
+          active: items.filter((i) => i.status === "active").length,
+          maintenance: items.filter((i) => i.status === "maintenance").length,
+          down: items.filter((i) => i.status === "down").length,
+        };
+        const itemColors = {
+          active: "#10B981",
+          maintenance: "#F59E0B",
+          down: "#EF4444",
+        };
+        const itemLabels = {
+          active: "Hoạt động",
+          maintenance: "Bảo trì",
+          down: "Đang hỏng",
+        };
+
+        const chartItems = document.getElementById("chart-items");
+        const maxItem = Math.max(1, ...Object.values(itemStats));
+        chartItems.innerHTML = "";
+        Object.keys(itemStats).forEach((key) => {
+          const value = itemStats[key];
+          const heightPercent = (value / maxItem) * 100;
+          chartItems.innerHTML += `
+                    <div class="chart-bar-wrapper">
+                        <div class="chart-value">${value}</div>
+                        <div class="chart-bar" style="height: ${Math.max(heightPercent, 2)}%; background: ${itemColors[key]};"></div>
+                        <div class="chart-label">${itemLabels[key]}</div>
+                    </div>
+                `;
+        });
+
+        // 3. Bảng tổng hợp
+        let totalWarehouseValue = 0;
+        warehouse.forEach((w) => {
+          totalWarehouseValue += w.qty * w.price;
+        });
+        const lowStockCount = warehouse.filter((w) => w.qty <= w.min).length;
+
+        const summaryRows = [
+          {
+            name: "Tổng số công việc",
+            value: works.length,
+            note: "Tất cả công việc trong hệ thống",
+          },
+          {
+            name: "Công việc đang thực hiện",
+            value: workStats.inprogress,
+            note: "Cần theo dõi tiến độ",
+          },
+          {
+            name: "Lệnh bảo trì quá hạn",
+            value: metrics.overdueCount || 0,
+            note: "Ngày dự kiến đã qua, chưa hoàn thành",
+            highlight: Number(metrics.overdueCount) > 0,
+          },
+          {
+            name: "Công việc đã hoàn thành",
+            value: workStats.terminated,
+            note: "Đã đóng",
+          },
+          {
+            name: "Tổng số thiết bị",
+            value: items.length,
+            note: "Toàn bộ máy móc",
+          },
+          {
+            name: "Thiết bị đang hỏng",
+            value: itemStats.down,
+            note: "Cần sửa chữa gấp",
+            highlight: true,
+          },
+          {
+            name: "Tổng mặt hàng trong kho",
+            value: warehouse.length,
+            note: "Số loại vật tư",
+          },
+          {
+            name: "Vật tư sắp hết",
+            value: lowStockCount,
+            note: "Dưới định mức tối thiểu",
+            highlight: true,
+          },
+          {
+            name: "Tổng giá trị kho",
+            value: formatVND(totalWarehouseValue),
+            note: "Tổng giá trị tồn kho hiện tại",
+          },
+          {
+            name: "Chi phí vật tư cấp phát ròng",
+            value: formatVND(Number(metrics.issuedCost || 0)),
+            note: "Tính từ sổ giao dịch xuất dùng và hoàn trả",
+          },
+        ];
+
+        const tbody = document.getElementById("summary-tbody");
+        tbody.innerHTML = summaryRows
+          .map(
+            (row) => `
+                <tr>
+                    <td style="font-weight:500;">${row.name}</td>
+                    <td style="font-weight:700; ${row.highlight ? "color: var(--danger);" : "color: var(--primary);"}">${row.value}</td>
+                    <td style="color: var(--text-light);">${row.note}</td>
+                </tr>
+            `,
+          )
+          .join("");
+      }
+
+      function exportReport() {
+        if (!reportData) return;
+        const rows = [
+          ["Loại bản ghi", "Mã", "Tên", "Ngày / trạng thái", "Thiết bị / số lượng", "Chi phí / ghi chú"],
+          ...reportData.works.map((work) => [
+            "Lệnh bảo trì", work.code, work.name, work.status, work.equip, work.priority,
+          ]),
+          ...reportData.warehouse.map((item) => [
+            "Vật tư kho", item.code, item.name, `${item.qty} ${item.unit}`, `Tối thiểu ${item.min}`, item.price,
+          ]),
+        ];
+        const csv = rows.map((row) => row.map((value) =>
+          `"${String(value ?? "").replace(/"/g, '""')}"`
+        ).join(",")).join("\r\n");
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(new Blob(["\uFEFF", csv], { type: "text/csv;charset=utf-8" }));
+        link.download = `myxtech-cmms-${MyxTech.utils.today()}.csv`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        MyxTech.init().then(renderReports).catch((error) => alert(error.message));
+      });
+    </script>
+    <script src="data-manager.js"></script>
+  </body>
+</html>
