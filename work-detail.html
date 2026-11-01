@@ -515,9 +515,7 @@
           <div class="header-title-row">
             <div class="title-group">
               <h1>
-                <a href="#" style="color: var(--primary); text-decoration: none"
-                  >WORK.002312</a
-                >
+                <span id="work-code" style="color: var(--primary)">WORK.002312</span>
                 <span class="status-badge" id="work-status">
                   <i class="fa-solid fa-spinner"></i> Đang thực hiện
                 </span>
@@ -805,9 +803,7 @@
         if (!w) return;
 
         // Header
-        const h1Link = document.querySelector(".title-group h1 a");
-        h1Link.innerText = "WORK." + w.code;
-        h1Link.href = `work-detail.html?id=${encodeURIComponent(w.code)}`;
+        document.getElementById("work-code").innerText = "WORK." + w.code;
         document.querySelector(".title-group p").innerText = w.name;
 
         // Status badge

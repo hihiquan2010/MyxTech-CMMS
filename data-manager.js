@@ -5,13 +5,25 @@
   let currentUser = null;
   let initialization;
 
+  async function readJsonResponse(response) {
+    const contentType = response.headers.get("content-type") || "";
+    if (!contentType.toLowerCase().includes("json")) {
+      throw new Error("API không trả về JSON. Hãy kiểm tra backend Node.js đang chạy và website đang trỏ đúng máy chủ.");
+    }
+    try {
+      return await response.json();
+    } catch {
+      throw new Error("Máy chủ trả về JSON không hợp lệ.");
+    }
+  }
+
   async function getCsrfToken() {
     if (csrfToken) return csrfToken;
     const response = await fetch("/api/auth/csrf", {
       credentials: "same-origin",
       headers: { Accept: "application/json" },
     });
-    const body = await response.json();
+    const body = await readJsonResponse(response);
     if (!response.ok) throw new Error(body.error || "Không thể khởi tạo phiên bảo mật.");
     csrfToken = body.csrfToken;
     return csrfToken;
@@ -37,7 +49,7 @@
     }
 
     if (response.status === 204) return null;
-    const result = await response.json();
+    const result = await readJsonResponse(response);
     if (!response.ok) {
       if (response.status === 403 && result.error?.includes("Phiên bảo mật")) {
         csrfToken = "";
@@ -300,7 +312,19 @@
       avatar.textContent = displayName.split(/\s+/).map((part) => part[0]).slice(0, 2).join("").toUpperCase();
     }
 
-    if (!document.getElementById("logoutBtn")) {
+    const topbar = document.querySelector(".topbar");
+    if (topbar && !topbar.querySelector("[data-role-badge]")) {
+      const badge = document.createElement("span");
+      badge.className = "role-badge";
+      badge.dataset.roleBadge = "";
+      badge.textContent = user.role === "admin" ? "Quản trị viên" : "Kỹ thuật viên";
+      badge.title = user.role === "admin"
+        ? "Có quyền quản trị tài khoản, thiết bị và danh mục kho"
+        : "Có quyền xử lý lệnh bảo trì và vật tư theo lệnh";
+      topbar.append(badge);
+    }
+
+    if (!document.querySelector(".topbar #logoutBtn")) {
       const button = document.createElement("button");
       button.id = "logoutBtn";
       button.className = "session-action";
@@ -320,44 +344,72 @@
     document.querySelectorAll("[data-admin-only]").forEach((element) => {
       element.hidden = user.role !== "admin";
     });
-    document.querySelectorAll(".nav-menu").forEach((menu) => {
-      if (!menu.querySelector('[data-account-link]')) {
-        const accountLink = document.createElement("a");
-        accountLink.href = "/account.html";
-        accountLink.className = "nav-item";
-        accountLink.dataset.accountLink = "";
-        accountLink.innerHTML = '<i class="fa-solid fa-user-gear"></i> Tài khoản của tôi';
-        menu.append(accountLink);
-      }
-      if (user.role === "admin" && !menu.querySelector('[data-user-management-link]')) {
-        const link = document.createElement("a");
-        link.href = "/users.html";
-        link.className = "nav-item";
-        link.dataset.userManagementLink = "";
-        link.innerHTML = '<i class="fa-solid fa-users"></i> Quản lý người dùng';
-        menu.append(link);
-      }
-    });
+    mountApplicationNavigation(user);
   }
 
-  function mountMobileNavigation() {
-    if (document.querySelector(".mobile-nav")) return;
-    const currentPage = location.pathname.split("/").pop();
-    const links = [
-      ["dashboard.html", "Tổng quan", "fa-chart-pie"],
-      ["items.html", "Thiết bị", "fa-microchip"],
-      ["warehouse.html", "Kho", "fa-boxes-stacked"],
-      ["reports.html", "Báo cáo", "fa-chart-column"],
-      ["account.html", "Tài khoản", "fa-user-gear"],
+  function mountApplicationNavigation(user) {
+    const currentPage = location.pathname.split("/").pop() || "dashboard.html";
+    const isWorkList = currentPage === "dashboard.html" && location.hash === "#work-orders";
+    const primaryLinks = [
+      { href: "/dashboard.html", page: "dashboard.html", label: "Tổng quan", mobileLabel: "Tổng quan", icon: "fa-chart-pie", title: "Tình hình và chỉ số bảo trì" },
+      { href: "/dashboard.html#work-orders", page: "work-orders", label: "Lệnh bảo trì", mobileLabel: "Lệnh", icon: "fa-list-check", title: "Tạo, theo dõi và xử lý lệnh bảo trì" },
+      { href: "/items.html", page: "items.html", label: "Thiết bị", mobileLabel: "Thiết bị", icon: "fa-microchip", title: "Danh mục và tình trạng thiết bị" },
+      { href: "/warehouse.html", page: "warehouse.html", label: "Kho vật tư", mobileLabel: "Kho", icon: "fa-boxes-stacked", title: "Tồn kho và giao dịch vật tư" },
+      { href: "/reports.html", page: "reports.html", label: "Báo cáo", mobileLabel: "Báo cáo", icon: "fa-chart-column", title: "Thống kê hoạt động bảo trì và kho" },
     ];
-    if (currentUser?.role === "admin") links.push(["users.html", "Người dùng", "fa-users"]);
-    const nav = document.createElement("nav");
-    nav.className = "mobile-nav";
-    nav.setAttribute("aria-label", "Điều hướng chính");
-    nav.innerHTML = links.map(([href, label, icon]) =>
-      `<a href="/${href}"${currentPage === href ? ' aria-current="page"' : ""}><i class="fa-solid ${icon}" aria-hidden="true"></i><span>${label}</span></a>`,
-    ).join("");
-    document.body.append(nav);
+    const accountLinks = [
+      { href: "/account.html", page: "account.html", label: "Tài khoản của tôi", mobileLabel: "Tài khoản", icon: "fa-user-gear", title: "Đổi mật khẩu cá nhân" },
+    ];
+    if (user.role === "admin") {
+      accountLinks.push({ href: "/users.html", page: "users.html", label: "Quản lý người dùng", mobileLabel: "Người dùng", icon: "fa-users", title: "Tạo tài khoản và quản lý quyền truy cập" });
+    }
+    const allLinks = [...primaryLinks, ...accountLinks];
+    const makeLink = (link, mobile = false) => {
+      const anchor = document.createElement("a");
+      anchor.href = link.href;
+      anchor.className = "nav-item";
+      anchor.title = link.title;
+      const active = link.page === "work-orders"
+        ? isWorkList || currentPage === "work-detail.html"
+        : link.page === currentPage && !isWorkList;
+      if (active) {
+        anchor.classList.add("active");
+        anchor.setAttribute("aria-current", "page");
+      }
+      const icon = document.createElement("i");
+      icon.className = `fa-solid ${link.icon}`;
+      icon.setAttribute("aria-hidden", "true");
+      anchor.append(icon);
+      if (mobile) {
+        const label = document.createElement("span");
+        label.textContent = link.mobileLabel;
+        anchor.append(label);
+      } else {
+        anchor.append(document.createTextNode(` ${link.label}`));
+      }
+      return anchor;
+    };
+
+    document.querySelectorAll(".nav-menu").forEach((menu) => {
+      menu.replaceChildren();
+      const primaryHeading = document.createElement("div");
+      primaryHeading.className = "nav-section-label";
+      primaryHeading.textContent = "NGHIỆP VỤ";
+      menu.append(primaryHeading, ...primaryLinks.map((link) => makeLink(link)));
+      const accountHeading = document.createElement("div");
+      accountHeading.className = "nav-section-label";
+      accountHeading.textContent = "TÀI KHOẢN";
+      menu.append(accountHeading, ...accountLinks.map((link) => makeLink(link)));
+    });
+
+    let nav = document.querySelector(".mobile-nav");
+    if (!nav) {
+      nav = document.createElement("nav");
+      nav.className = "mobile-nav";
+      nav.setAttribute("aria-label", "Điều hướng chính");
+      document.body.append(nav);
+    }
+    nav.replaceChildren(...allLinks.map((link) => makeLink(link, true)));
   }
 
   document.addEventListener("click", (event) => {
@@ -390,7 +442,6 @@
       currentUser = await User.get();
       await migrateLegacyData(currentUser);
       mountUserMenu(currentUser);
-      mountMobileNavigation();
       return currentUser;
     })();
     return initialization;
