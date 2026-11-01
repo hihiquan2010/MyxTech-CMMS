@@ -257,7 +257,7 @@ Phần mềm này là **tài sản độc quyền** của MyxTech. **Không ph�
 
 Xem chi tiết tại file [LICENSE](./LICENSE).
 
-Liên hệ cấp phép: **admin@myxtech.vn**
+Liên hệ cấp phép: **uyp079658@gmail.com**
 
 ---
 
