@@ -16,8 +16,8 @@ loginForm.addEventListener("submit", async (event) => {
     const password = document.getElementById("password").value;
     await MyxTech.auth.login(email, password);
     const requestedPage = new URLSearchParams(location.search).get("next") || "dashboard.html";
-    const allowedPages = new Set(["dashboard.html", "items.html", "warehouse.html", "reports.html", "work-detail.html", "users.html", "account.html"]);
-    location.replace(allowedPages.has(requestedPage) ? `/${requestedPage}` : "/dashboard.html");
+    const allowedPages = new Set(["dashboard.html", "items.html", "warehouse.html", "reports.html", "work-detail.html", "users.html", "account.html", "supabase-import.html"]);
+    location.replace(MyxTech.utils.pageUrl(allowedPages.has(requestedPage) ? requestedPage : "dashboard.html"));
   } catch (error) {
     loginMessage.textContent = error.message;
     loginMessage.classList.add("is-error");

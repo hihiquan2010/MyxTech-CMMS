@@ -192,7 +192,7 @@ app.use(helmet({
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
       imgSrc: ["'self'", "data:"],
-      connectSrc: ["'self'"],
+      connectSrc: ["'self'", "https://wlqyjvagxybuqgfhczgz.supabase.co"],
       objectSrc: ["'none'"],
       baseUri: ["'self'"],
       frameAncestors: ["'none'"],
@@ -966,9 +966,9 @@ api.post("/migration/local", requireAdmin, validationRoute((req, res) => {
 
 app.use("/api", verifySameOrigin, verifyCsrf, api);
 
-const publicPages = new Set(["index.html", "login.html", "data-manager.js", "login.js", "app.css"]);
-const protectedPages = new Set(["dashboard.html", "items.html", "warehouse.html", "reports.html", "work-detail.html", "users.html", "account.html"]);
-const adminPages = new Set(["users.html"]);
+const publicPages = new Set(["index.html", "login.html", "data-manager.js", "login.js", "supabase-config.js", "app.css"]);
+const protectedPages = new Set(["dashboard.html", "items.html", "warehouse.html", "reports.html", "work-detail.html", "users.html", "account.html", "supabase-import.html"]);
+const adminPages = new Set(["users.html", "supabase-import.html"]);
 const staticTypes = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css; charset=utf-8" };
 
 app.get("/", (req, res) => res.redirect("/index.html"));
