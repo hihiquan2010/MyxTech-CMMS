@@ -1,62 +1,127 @@
-# MyxTech CMMS
+# Deploy Web Lên Internet Không Cần GitHub Hay Bên Thứ Ba
 
-MyxTech is a browser-based CMMS for equipment, maintenance orders, inventory, and stock movement history. The GitHub Pages frontend uses Supabase Auth and Postgres; access control is enforced by database grants, Row Level Security (RLS), and narrowly scoped RPC functions.
+Hướng dẫn tổng hợp các cách đưa website lên internet mà **không phụ thuộc vào GitHub, Vercel, Netlify** hay các nền tảng deploy trung gian. Bạn sẽ tự quản lý không gian lưu trữ và chương trình phục vụ website của mình.
 
-## Security model
+## Mục lục
 
-- `supabase-config.js` contains only the Supabase project URL and publishable key. These are public client settings, not secrets.
-- Never put a Supabase `service_role` key, database password, or other secret in this repository or any browser file.
-- Do not re-run the original SQL that grants `public` unrestricted access. If the lockdown migration has not already been applied, run `supabase/migrations/202611030002_revoke_public_cmms_policies.sql` first.
-- Run `supabase/migrations/202611030003_cmms_secure_roles_and_operations.sql` in the Supabase SQL Editor after the lockdown. It installs the CMMS schema, RLS rules, and transactional operations.
-- The project must not be used with real data until the secure migration has completed and an administrator has confirmed that anonymous requests cannot read or modify CMMS rows.
+- [1. Tự host trên máy tính cá nhân](#1-tự-host-trên-máy-tính-cá-nhân)
+- [2. Thuê VPS và tự cấu hình](#2-thuê-vps-và-tự-cấu-hình)
+- [3. Sử dụng Docker để đóng gói và deploy](#3-sử-dụng-docker-để-đóng-gói-và-deploy)
+- [4. Tóm tắt và lựa chọn](#4-tóm-tắt-và-lựa-chọn)
+- [Giấy phép](#giấy-phép)
+- [Liên hệ](#liên-hệ)
 
-## Supabase setup
+---
 
-1. In Supabase SQL Editor, run the secure migration above. The existing `devices`, `maintenance_orders`, `warehouse_items`, and `activity_logs` tables are expected.
-2. In **Authentication → Users**, create the first user. Then run this SQL in the SQL Editor, replacing the email and name:
+## 1. Tự host trên máy tính cá nhân
 
-   ```sql
-   update public.profiles
-   set role = 'admin', full_name = 'Quản trị viên'
-   where email = lower('admin@company.com');
+Phù hợp cho nhu cầu nhỏ, thử nghiệm hoặc chia sẻ nội bộ. Bạn biến laptop/PC của mình thành web server.
 
-   select email, role, is_active
-   from public.profiles
-   where email = lower('admin@company.com');
+### Công cụ gợi ý
+
+- **HomeHost**: Công cụ dòng lệnh mã nguồn mở giúp biến laptop thành web server nhanh chóng. Tự động phát hiện loại dự án, cấu hình Caddy và có thể tạo tunnel miễn phí.
+
+  ```bash
+  pip install homehost
+  homehost serve . --public
+  ```
+
+- **html-golive**: Cho phép publish file HTML hoặc thư mục dự án thành URL có thể chia sẻ, chạy trên máy cá nhân, NAS hoặc VPS nội bộ.
+
+### Hạn chế
+
+- Máy tính phải bật 24/7.
+- Cấu hình mạng gia đình có thể phức tạp nếu muốn truy cập công khai ổn định (port forwarding, IP tĩnh).
+
+---
+
+## 2. Thuê VPS và tự cấu hình
+
+Đây là giải pháp tự chủ và ổn định nhất. Bạn thuê VPS từ nhà cung cấp hạ tầng như DigitalOcean, Vultr, Hostease... và tự cài đặt mọi thứ.
+
+### Quy trình cơ bản
+
+1. **Chọn và kết nối VPS**
+   - Thuê VPS (khuyến nghị Ubuntu 22.04 LTS cho người mới).
+   - Kết nối qua SSH bằng Terminal, PuTTY hoặc công cụ tương tự.
+
+2. **Cài đặt web server**
+   - Cài **Nginx** hoặc **Apache**.
+   - Với website động (WordPress, Laravel...), có thể cài bộ **LEMP** (Linux, Nginx, MySQL, PHP).
+   - Với trang tĩnh (HTML/CSS/JS), chỉ cần Nginx là đủ.
+
+3. **Đưa code lên server**
+   - Dùng `scp` để copy trực tiếp thư mục code từ máy tính lên VPS.
+   - Hoặc dùng các công cụ CLI chuyên dụng.
+
+4. **Trỏ tên miền và cài SSL**
+   - Trỏ bản ghi A của tên miền về IP VPS.
+   - Cài chứng chỉ SSL miễn phí từ Let's Encrypt để chạy `https://`.
+
+### Công cụ hỗ trợ
+
+- **sitedrop**: Cài trên cả VPS và máy cá nhân. Sau đó upload file HTML để có URL công khai do VPS của bạn phục vụ.
+
+  ```bash
+  sitedrop upload portfolio.html
+  ```
+
+- **djevops**: Công cụ deploy ứng dụng **Django** lên VPS Linux (Ubuntu/Debian) nhanh chóng, cần quyền SSH root.
+
+---
+
+## 3. Sử dụng Docker để đóng gói và deploy
+
+Docker giúp đóng gói ứng dụng và môi trường chạy vào container, đảm bảo môi trường nhất quán trên mọi VPS có cài Docker.
+
+### Quy trình thường dùng
+
+1. **Build locally**
+
+   ```bash
+   docker build -t my-site .
    ```
 
-   Confirm that exactly one active profile is returned with role `admin`. New users created from **Quản lý người dùng** are provisioned by the Edge Function and default to technician unless an administrator selects otherwise. Existing SQLite passwords and user records are not imported.
-3. Deploy `supabase/functions/admin-create-user/index.ts` with the Supabase CLI:
+2. **Upload lên VPS**
 
-   ```powershell
-   supabase functions deploy admin-create-user --project-ref wlqyjvagxybuqgfhczgz
+   ```bash
+   scp -r ./my-project user@your-vps-ip:/var/www/
    ```
 
-   In **Edge Function Secrets**, make sure `SUPABASE_SERVICE_ROLE_KEY` is configured as a server-side secret, and set:
-   - `SUPABASE_PUBLISHABLE_KEY` to the project's publishable key (or keep the platform-provided `SUPABASE_ANON_KEY` available).
-   - `ALLOWED_ORIGINS` to the exact Pages origin, for example `https://hihiquan2010.github.io`. Do not include a path or trailing slash.
-4. In **Authentication → URL Configuration**, set the Site URL to the Pages site and add the project URL to the redirect allow list, for example `https://hihiquan2010.github.io/MyxTech-CMMS/**`.
-5. In repository **Settings → Pages**, select **GitHub Actions** as the build and deployment source. The workflow publishes only the static frontend files from the repository's `main` branch; server code, database files, migrations, and secrets are not included in the Pages artifact.
+3. **Chạy container trên VPS**
 
-## Import existing SQLite business data
+   ```bash
+   docker run -d -p 3000:3000 my-site
+   ```
 
-The migration intentionally does not import users or password hashes. Export business data from the existing local database with Node.js 22.5 or later:
+4. **Cấu hình Nginx làm reverse proxy**
+   - Nginx nhận request từ cổng 80/443.
+   - Chuyển tiếp vào container đang chạy ở cổng nội bộ, ví dụ `3000`.
 
-```powershell
-node scripts/export-supabase.mjs
-```
+---
 
-This creates `data\supabase-import.json`, containing equipment, work orders, warehouse items, materials, and activity/stock history. It omits users, password hashes, and sessions. Sign in as an administrator, open **Nhập dữ liệu cũ**, select the JSON file, review the record counts, and confirm the one-time import. The Supabase CMMS tables must be empty; the import is transactional and stops rather than overwriting existing records. Keep a private backup of the SQLite database and exported file until the result has been checked.
+## 4. Tóm tắt và lựa chọn
 
-## Local preview and legacy server
+| Phương pháp | Phù hợp với | Ưu điểm | Lưu ý |
+| :--- | :--- | :--- | :--- |
+| **Tự host trên máy cá nhân** | Thử nghiệm, chia sẻ nội bộ, dự án siêu nhỏ | Miễn phí, không cần thuê VPS, kiểm soát tuyệt đối | Máy phải bật 24/7, cấu hình mạng phức tạp nếu muốn truy cập công khai ổn định |
+| **Thuê VPS và tự cấu hình** | Website cá nhân, blog, ứng dụng web cần ổn định | Toàn quyền kiểm soát, hiệu năng tốt, IP tĩnh, phù hợp gắn tên miền riêng | Cần kiến thức cơ bản về Linux và quản trị server |
+| **Docker trên VPS** | Ứng dụng hiện đại, cần môi trường nhất quán | Linh hoạt, dễ nâng cấp, cô lập ứng dụng, dễ di chuyển giữa các VPS | Cần làm quen với Docker, cần thêm bước cấu hình Nginx làm reverse proxy |
 
-The Pages application is static. Preview it with a static web server (for example, VS Code Live Server) after adding that local origin to Supabase Auth's redirect allow list and to the Edge Function's `ALLOWED_ORIGINS`.
+> **Kết luận:** Để thoát khỏi sự phụ thuộc vào GitHub và các nền tảng deploy, thuê VPS và tự cấu hình web server (Nginx) là con đường chuẩn mực và bền vững nhất. Bạn có thể bắt đầu với hướng dẫn LEMP cơ bản, sau đó nâng cấp lên Docker nếu cần.
 
-`npm start` starts the older Node.js/SQLite server; it is not the GitHub Pages deployment or the Supabase frontend. Do not expose it publicly as a substitute for the Supabase configuration. The legacy backend and SQLite files remain in the repository for the local data export and compatibility tests.
+---
 
-## Tests
+## Giấy phép
 
-```powershell
-npm.cmd ci
-npm.cmd test
-```
+Dự án này được phân phối theo giấy phép được quy định trong file [LICENSE](./LICENSE). Vui lòng đọc kỹ các điều khoản trước khi sử dụng, sao chép hoặc phân phối lại.
+
+## Liên hệ
+
+Nếu có câu hỏi, góp ý hoặc cần hỗ trợ, vui lòng liên hệ:
+
+- **Email:** [uyp079658@gmail.com](mailto:uyp079658@gmail.com)
+
+---
+
+© 2026. Nội dung được tổng hợp và chia sẻ nhằm mục đích tham khảo.
