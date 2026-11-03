@@ -1,270 +1,62 @@
-<div align="center">
+# MyxTech CMMS
 
-# 🛠️ MyxTech CMMS
+MyxTech is a browser-based CMMS for equipment, maintenance orders, inventory, and stock movement history. The GitHub Pages frontend uses Supabase Auth and Postgres; access control is enforced by database grants, Row Level Security (RLS), and narrowly scoped RPC functions.
 
-**Hệ thống Quản lý Bảo trì Điện tử (Computerized Maintenance Management System)**
+## Security model
 
-Xây dựng trên Node.js · Express · SQLite
+- `supabase-config.js` contains only the Supabase project URL and publishable key. These are public client settings, not secrets.
+- Never put a Supabase `service_role` key, database password, or other secret in this repository or any browser file.
+- Do not re-run the original SQL that grants `public` unrestricted access. If the lockdown migration has not already been applied, run `supabase/migrations/202611030002_revoke_public_cmms_policies.sql` first.
+- Run `supabase/migrations/202611030003_cmms_secure_roles_and_operations.sql` in the Supabase SQL Editor after the lockdown. It installs the CMMS schema, RLS rules, and transactional operations.
+- The project must not be used with real data until the secure migration has completed and an administrator has confirmed that anonymous requests cannot read or modify CMMS rows.
 
-[![Node.js](https://img.shields.io/badge/Node.js-%E2%89%A522.5-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
-[![SQLite](https://img.shields.io/badge/SQLite-Embedded-003B57?logo=sqlite&logoColor=white)](https://sqlite.org/)
-[![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express&logoColor=white)](https://expressjs.com/)
-[![License](https://img.shields.io/badge/License-Proprietary-red.svg)](#-giấy-phép)
-[![Status](https://img.shields.io/badge/Status-Active-success.svg)]()
+## Supabase setup
 
-[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)]()
-[![Security](https://img.shields.io/badge/Security-scrypt%20%2B%20HttpOnly-blue.svg)]()
+1. In Supabase SQL Editor, run the secure migration above. The existing `devices`, `maintenance_orders`, `warehouse_items`, and `activity_logs` tables are expected.
+2. In **Authentication → Users**, create the first user. Then run this SQL in the SQL Editor, replacing the email and name:
 
-</div>
+   ```sql
+   update public.profiles
+   set role = 'admin', full_name = 'Quản trị viên'
+   where email = lower('admin@company.com');
 
----
+   select email, role, is_active
+   from public.profiles
+   where email = lower('admin@company.com');
+   ```
 
-## 📖 Giới thiệu
+   Confirm that exactly one active profile is returned with role `admin`. New users created from **Quản lý người dùng** are provisioned by the Edge Function and default to technician unless an administrator selects otherwise. Existing SQLite passwords and user records are not imported.
+3. Deploy `supabase/functions/admin-create-user/index.ts` with the Supabase CLI:
 
-**MyxTech CMMS** là ứng dụng quản lý bảo trì thiết bị chạy trên nền **Node.js + Express + SQLite**. Toàn bộ dữ liệu được lưu trữ cục bộ trên máy chủ, phiên đăng nhập bảo mật bằng cookie `HttpOnly` — **không** lưu mật khẩu hay token trong `localStorage`.
+   ```powershell
+   supabase functions deploy admin-create-user --project-ref wlqyjvagxybuqgfhczgz
+   ```
 
-> 🔒 **Mã nguồn độc quyền** — Xem mục [Giấy phép](#-giấy-phép).
+   In **Edge Function Secrets**, make sure `SUPABASE_SERVICE_ROLE_KEY` is configured as a server-side secret, and set:
+   - `SUPABASE_PUBLISHABLE_KEY` to the project's publishable key (or keep the platform-provided `SUPABASE_ANON_KEY` available).
+   - `ALLOWED_ORIGINS` to the exact Pages origin, for example `https://hihiquan2010.github.io`. Do not include a path or trailing slash.
+4. In **Authentication → URL Configuration**, set the Site URL to the Pages site and add the project URL to the redirect allow list, for example `https://hihiquan2010.github.io/MyxTech-CMMS/**`.
+5. In repository **Settings → Pages**, select **GitHub Actions** as the build and deployment source. The workflow publishes only the static frontend files from the repository's `main` branch; server code, database files, migrations, and secrets are not included in the Pages artifact.
 
----
+## Import existing SQLite business data
 
-## ✨ Tính năng chính
-
-| Nhóm | Chức năng |
-|---|---|
-| 🧾 **Lệnh bảo trì** | Tạo lệnh từ Tổng quan, liên kết thiết bị, phân loại (phòng ngừa / khắc phục / kiểm tra), ngày dự kiến, mức ưu tiên, người phụ trách |
-| 🔄 **Vòng đời lệnh** | Đã lên lịch → Đang thực hiện → Hoàn tất → Phê duyệt, có nhật ký đầy đủ |
-| 📦 **Quản lý kho** | Nhập/xuất/điều chỉnh tồn có lý do, ghi sổ giao dịch trong cùng transaction SQLite, chặn tồn âm |
-| 🧰 **Vật tư** | Chọn mã hàng đang hoạt động, hoàn trả khi xóa dòng, không sửa tồn trực tiếp từ form |
-| 🏭 **Hồ sơ thiết bị** | Hiển thị lệnh bảo trì liên quan, trạng thái hoạt động / bảo trì / ngừng dùng |
-| 📊 **Báo cáo** | Lệnh quá hạn, tồn thấp, giá trị kho, chi phí vật tư ròng — xuất CSV |
-| 👥 **Người dùng** | Phân quyền Admin / Technician, kích hoạt/vô hiệu hóa, đổi mật khẩu, thu hồi phiên |
-| 🔐 **Bảo mật** | Băm mật khẩu `scrypt`, cookie `HttpOnly`, rate limit đăng nhập, không lưu token client-side |
-| 🗃️ **Migration** | Tự động migration idempotent khi khởi động, nhập dữ liệu cũ có kiểm tra phía server |
-
----
-
-## 🧩 Yêu cầu hệ thống
-
-| Thành phần | Phiên bản tối thiểu | Ghi chú |
-|---|---|---|
-| Node.js | **22.5+** | Cần module `node:sqlite` tích hợp sẵn |
-| npm | 10+ | Đi kèm Node.js |
-| OS | Windows / Linux / macOS | Không phụ thuộc hệ điều hành |
-
----
-
-## 🚀 Cài đặt & Khởi chạy
+The migration intentionally does not import users or password hashes. Export business data from the existing local database with Node.js 22.5 or later:
 
 ```powershell
-# 1. Cài dependencies
-npm.cmd install
-
-# 2. Khởi động server
-npm.cmd start
+node scripts/export-supabase.mjs
 ```
 
-Mở trình duyệt: **http://127.0.0.1:3000**
+This creates `data\supabase-import.json`, containing equipment, work orders, warehouse items, materials, and activity/stock history. It omits users, password hashes, and sessions. Sign in as an administrator, open **Nhập dữ liệu cũ**, select the JSON file, review the record counts, and confirm the one-time import. The Supabase CMMS tables must be empty; the import is transactional and stops rather than overwriting existing records. Keep a private backup of the SQLite database and exported file until the result has been checked.
 
-Cơ sở dữ liệu được tạo tự động tại:
+## Local preview and legacy server
 
-```
-data\myxtech.sqlite
-```
+The Pages application is static. Preview it with a static web server (for example, VS Code Live Server) after adding that local origin to Supabase Auth's redirect allow list and to the Edge Function's `ALLOWED_ORIGINS`.
 
----
+`npm start` starts the older Node.js/SQLite server; it is not the GitHub Pages deployment or the Supabase frontend. Do not expose it publicly as a substitute for the Supabase configuration. The legacy backend and SQLite files remain in the repository for the local data export and compatibility tests.
 
-## 👤 Tạo tài khoản quản trị đầu tiên
-
-Trang đăng nhập: `/login.html`. **Không có tài khoản/mật khẩu mặc định.**
-
-### 🔑 Tạo Admin
+## Tests
 
 ```powershell
-node server.js --create-admin "admin@company.com" "Quản trị viên"
+npm.cmd ci
+npm.cmd test
 ```
-
-- Yêu cầu nhập mật khẩu **2 lần**
-- Không hiển thị ký tự khi nhập
-- Mật khẩu tối thiểu **12 ký tự**
-- Băm bằng `scrypt` trước khi lưu
-
-### 🔧 Tạo Kỹ thuật viên
-
-```powershell
-node server.js --create-user "tech@company.com" "Nguyễn Văn A" technician
-```
-
-### 📋 Quản lý người dùng
-
-Sau khi đăng nhập Admin → **Quản lý người dùng**:
-- Tạo tài khoản admin / kỹ thuật viên
-- Kích hoạt / vô hiệu hóa tài khoản
-- Đổi mật khẩu tại **Tài khoản của tôi**
-- Đổi mật khẩu hoặc vô hiệu hóa sẽ **thu hồi các phiên khác**
-- Không thể tự vô hiệu hóa hoặc vô hiệu hóa **admin cuối cùng**
-
----
-
-## 🔐 Phân quyền
-
-| Chức năng | 👑 Admin | 🔧 Technician |
-|---|:---:|:---:|
-| Sửa thiết bị | ✅ | ❌ |
-| Tạo/điều chỉnh kho | ✅ | ❌ |
-| Ngừng sử dụng vật tư | ✅ | ❌ |
-| Xóa lệnh (chưa có giao dịch) | ✅ | ❌ |
-| Phê duyệt lệnh | ✅ | ❌ |
-| Quản lý người dùng | ✅ | ❌ |
-| Quản lý lệnh | ✅ | ✅ |
-| Bắt đầu / hoàn tất công việc | ✅ | ✅ |
-| Xuất / hoàn trả vật tư (lệnh đang mở) | ✅ | ✅ |
-
----
-
-## 🗄️ Cơ sở dữ liệu
-
-### Bảng chính
-
-| Bảng | Mục đích |
-|---|---|
-| `users` | Tài khoản, vai trò, mật khẩu đã băm |
-| `assets` | Thiết bị |
-| `work_orders` | Lệnh bảo trì |
-| `maintenance_logs` | Nhật ký lệnh |
-| `inventory_items` | Vật tư |
-| `inventory_transactions` | Sổ giao dịch kho |
-
-### Migration tự động
-
-- Cột CMMS mới được bổ sung bằng migration **idempotent** khi server khởi động
-- Tồn kho trước khi có sổ giao dịch → ghi nhận **tồn đầu kỳ một lần**
-- Chênh lệch dữ liệu cũ → ghi thành **giao dịch riêng**, không ghi đè lịch sử
-
-### Nhập dữ liệu trình duyệt cũ
-
-Nếu admin đăng nhập trên trình duyệt còn dữ liệu cũ:
-1. Ứng dụng **đề nghị nhập** dữ liệu vào SQLite
-2. Server **kiểm tra lại** toàn bộ
-3. Chỉ xóa dữ liệu trình duyệt **sau khi nhập thành công**
-4. Muốn thử lại → xóa khóa `myxtech_migration_v1` trong browser storage
-
----
-
-## 🌐 Triển khai
-
-### ✅ Checklist trước khi lên production
-
-- [ ] Đặt `NODE_ENV=production`
-- [ ] Triển khai sau **HTTPS** (bật cookie `Secure` + HSTS)
-- [ ] Đặt **reverse proxy** (Nginx/Caddy) phía trước
-- [ ] **Không** public trực tiếp cổng Node.js (đang bind `127.0.0.1`)
-- [ ] Giữ thư mục `data\` **riêng tư**
-- [ ] Sao lưu `myxtech.sqlite` định kỳ
-- [ ] **Không** commit database hoặc `.env` lên Git
-- [ ] Nếu chạy nhiều instance → dùng kho chia sẻ cho rate limiting
-
-### 📦 Cấu trúc thư mục
-
-```
-MyxTech-CMMS/
-├── data/                    # ⚠️ KHÔNG commit — chứa myxtech.sqlite
-│   └── myxtech.sqlite
-├── test/                    # Test suite
-├── server.js                # Entry point
-├── data-manager.js          # Tầng dữ liệu
-├── login.js
-├── *.html                   # Giao diện
-├── app.css
-├── package.json
-├── .env                     # ⚠️ KHÔNG commit
-├── .gitignore
-├── LICENSE
-└── README.md
-```
-
-### 🛡️ `.gitignore` mẫu
-
-```gitignore
-node_modules/
-data/*.sqlite
-data/*.sqlite-wal
-data/*.sqlite-shm
-.env
-.env.*
-*.log
-.DS_Store
-Thumbs.db
-.vscode/
-```
-
----
-
-## 🧪 Kiểm thử
-
-```powershell
-npm test
-```
-
-Bao gồm:
-- `test/server.test.js` — API & server
-- `test/migration.test.js` — migration & sổ giao dịch
-
----
-
-## ❓ Câu hỏi thường gặp
-
-<details>
-<summary><b>Có cần cài SQLite server riêng không?</b></summary>
-
-**Không.** Dự án dùng `node:sqlite` (module tích hợp của Node.js ≥ 22.5). Không cần cài MySQL/PostgreSQL/SQLite server.
-</details>
-
-<details>
-<summary><b>Có deploy lên GitHub Pages được không?</b></summary>
-
-**Không.** GitHub Pages chỉ phục vụ trang tĩnh, không chạy Node.js backend. Cần host hỗ trợ Node.js + ổ đĩa bền vững (Render, Railway, VPS…).
-</details>
-
-<details>
-<summary><b>File database bị mất khi restart?</b></summary>
-
-Trên dịch vụ cloud, cần gắn **persistent volume** (ổ đĩa bền vững) vào thư mục `data/`. Nếu không, container restart → mất DB.
-</details>
-
-<details>
-<summary><b>Có thể chạy nhiều server cùng lúc không?</b></summary>
-
-SQLite phù hợp với **một instance**. Nếu cần scale ngang → chuyển sang **PostgreSQL**.
-</details>
-
-<details>
-<summary><b>Quên mật khẩu admin thì sao?</b></summary>
-
-Dừng server, chạy lại lệnh `--create-admin` với email mới, hoặc thao tác trực tiếp trên SQLite (xóa/cập nhật bảng `users`).
-</details>
-
----
-
-## 📜 Giấy phép
-
-**Copyright © 2025 MyxTech. All rights reserved.**
-
-Phần mềm này là **tài sản độc quyền** của MyxTech. **Không phải phần mềm mã nguồn mở.**
-
-- ❌ Không được sao chép, phân phối, chỉnh sửa, hoặc sử dụng thương mại khi chưa có **văn bản cho phép**.
-- ❌ Không được tái sử dụng mã nguồn cho dự án khác.
-- ✅ Chỉ được sử dụng cho mục đích nội bộ của MyxTech hoặc theo hợp đồng đã ký.
-
-Xem chi tiết tại file [LICENSE](./LICENSE).
-
-Liên hệ cấp phép: **uyp079658@gmail.com**
-
----
-
-<div align="center">
-
-**MyxTech CMMS** — Được xây dựng với ❤️ cho công tác bảo trì chuyên nghiệp.
-
-[⬆ Về đầu trang](#️-myxtech-cmms)
-
-</div>

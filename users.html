@@ -163,7 +163,7 @@
         const button = event.target.closest("button[data-user-id]");
         if (!button) return;
         const enable = button.dataset.nextState === "1";
-        const account = users.find((user) => user.id === Number(button.dataset.userId));
+        const account = users.find((user) => String(user.id) === button.dataset.userId);
         if (!account || !confirm(`${enable ? "Kích hoạt" : "Vô hiệu hóa"} tài khoản ${account.email}?`)) return;
         button.disabled = true;
         try {
@@ -178,13 +178,14 @@
       document.addEventListener("DOMContentLoaded", () => {
         MyxTech.init().then(async (user) => {
           if (user.role !== "admin") {
-            location.replace("/dashboard.html");
+            location.replace(MyxTech.utils.pageUrl("dashboard.html"));
             return;
           }
           await renderUsers();
         }).catch((error) => alert(error.message));
       });
     </script>
-    <script src="/data-manager.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="data-manager.js"></script>
   </body>
 </html>

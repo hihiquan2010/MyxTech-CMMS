@@ -2,7 +2,7 @@
   "name": "myxtech-cmms",
   "version": "2.0.0",
   "private": true,
-  "description": "CMMS application with a Node.js, Express, and SQLite backend",
+  "description": "Supabase-backed CMMS frontend with a legacy Node.js and SQLite data exporter",
   "engines": {
     "node": ">=22.5.0"
   },

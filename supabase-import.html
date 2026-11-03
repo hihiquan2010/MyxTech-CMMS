@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nhập dữ liệu SQLite - MyxTech</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="app.css" />
+    <style>
+      body { display: flex; min-height: 100vh; height: 100vh; overflow: hidden; }
+      .sidebar { width: 260px; background: var(--white); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+      .sidebar-logo { height: 70px; display: flex; align-items: center; padding: 0 24px; font-size: 20px; font-weight: 700; color: var(--primary); border-bottom: 1px solid var(--border); gap: 10px; text-decoration: none; }
+      .logo-icon { width: 28px; height: 28px; background: var(--primary); border-radius: 6px; }
+      .nav-menu { padding: 20px 12px; flex: 1; }
+      .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+      .topbar { height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; background: var(--white); border-bottom: 1px solid var(--border); }
+      .content-wrapper { width: min(900px, 100%); margin: 0 auto; padding: 32px 24px; }
+      .card { padding: 24px; background: var(--white); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--card-shadow); }
+      .card h1 { margin: 0 0 10px; font-size: 24px; }
+      .card p { color: var(--text-light); line-height: 1.6; }
+      .notice { margin: 18px 0; padding: 14px; border: 1px solid #fcd34d; border-radius: 10px; background: #fffbeb; color: #92400e; line-height: 1.55; }
+      .form-group { margin: 20px 0; }
+      .form-group label { display: block; margin-bottom: 8px; font-weight: 600; }
+      .form-group input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; }
+      .message { min-height: 24px; margin-top: 14px; font-size: 14px; }
+      @media(max-width:768px) { body { display: block; height: auto; overflow: auto; } .sidebar { display: none; } .main-content { min-height: 100vh; overflow: visible; } .topbar { padding: 10px 16px; } .content-wrapper { padding: 22px 16px 140px; } }
+    </style>
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a href="dashboard.html" class="sidebar-logo"><span class="logo-icon"></span>MyxTech</a>
+      <nav class="nav-menu" aria-label="Điều hướng chính"></nav>
+    </aside>
+    <main class="main-content">
+      <header class="topbar"><strong>Nhập dữ liệu CMMS</strong><span id="currentUser"></span></header>
+      <div class="content-wrapper">
+        <section class="card">
+          <h1>Chuyển dữ liệu SQLite sang Supabase</h1>
+          <p>Chọn tệp JSON do công cụ xuất tạo ra. Tệp chỉ chứa thiết bị, lệnh, kho và nhật ký CMMS; không chứa tài khoản, mật khẩu hay session.</p>
+          <div class="notice"><strong>Lưu ý:</strong> thao tác chỉ chạy một lần và chỉ khi các bảng CMMS trên Supabase đang trống. Nếu phát hiện dữ liệu đích hoặc bản ghi không liên kết được, toàn bộ giao dịch sẽ bị hủy; dữ liệu nguồn không bị xóa.</div>
+          <form id="importForm">
+            <div class="form-group">
+              <label for="importFile">Tệp supabase-import.json</label>
+              <input id="importFile" type="file" accept=".json,application/json" required />
+            </div>
+            <button type="submit" class="btn btn-primary" id="importButton">Kiểm tra và nhập dữ liệu</button>
+            <p id="importMessage" class="message" role="status" aria-live="polite"></p>
+          </form>
+        </section>
+      </div>
+    </main>
+    <script>
+      "use strict";
+      document.getElementById("importForm").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const file = document.getElementById("importFile").files[0];
+        const button = document.getElementById("importButton");
+        const message = document.getElementById("importMessage");
+        if (!file) return;
+        button.disabled = true;
+        message.textContent = "";
+        try {
+          const data = JSON.parse(await file.text());
+          const counts = Object.fromEntries(["items", "works", "warehouse", "materials", "workEvents", "stockMovements"]
+            .map((key) => [key, Array.isArray(data[key]) ? data[key].length : 0]));
+          const summary = Object.entries(counts).map(([key, count]) => `${key}: ${count}`).join("\n");
+          if (!confirm(`Xác nhận nhập dữ liệu sau vào các bảng CMMS đang trống?\n\n${summary}\n\nKhông nhập tài khoản/mật khẩu.`)) return;
+          const imported = await MyxTech.Import.run(data);
+          message.style.color = "var(--success)";
+          message.textContent = `Đã nhập thành công: ${Object.entries(imported).map(([key, count]) => `${key} ${count}`).join(", ")}.`;
+        } catch (error) {
+          message.style.color = "var(--danger)";
+          message.textContent = error.message;
+        } finally {
+          button.disabled = false;
+        }
+      });
+      document.addEventListener("DOMContentLoaded", () => {
+        MyxTech.init().then((user) => {
+          if (user.role !== "admin") {
+            location.replace(MyxTech.utils.pageUrl("dashboard.html"));
+            return;
+          }
+          document.getElementById("currentUser").textContent = user.full_name;
+        }).catch((error) => alert(error.message));
+      });
+    </script>
+    <script src="supabase-config.js"></script>
+    <script src="data-manager.js"></script>
+  </body>
+</html>
